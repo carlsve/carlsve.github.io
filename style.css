@@ -10,6 +10,8 @@ Muted Tones Pallette
 */
 
 .description {
+    color: #F4F4F4;
+    font-size: 18px;
     position: relative;
     width: 100%;
 }
@@ -31,8 +33,9 @@ Muted Tones Pallette
 .name-tag {
     padding-right: 50px;
     float: right;
-    color: #DCD0C0;
+    color: #C0B283;
     font-size: 50px;
+    height:25%;
     text-align: right;
 }
 
@@ -95,4 +98,24 @@ body {
 
 #card.flipped {
     transform: translateX( -100%) rotateY( 180deg);
+}
+
+/* unvisited link */
+a:link {
+    color: #F4F4F4;
+}
+
+/* visited link */
+a:visited {
+    color: #F4F4F4;
+}
+
+/* mouse over link */
+a:hover {
+    color: #C0B283;
+}
+
+/* selected link */
+a:active {
+    color: #C0B283;
 }
