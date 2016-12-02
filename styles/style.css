@@ -30,7 +30,7 @@ Muted Tones Pallette
 .profile-picture {
     border-radius: 3px;
     position: relative;
-    width: 25%;
+    width: 30%;
 }
 
 .name-tag {
@@ -149,6 +149,10 @@ body {
 
     #card figure {
         top: 25%;
+    }
+
+    .profile-picture {
+        width: 25%;
     }
 
     .name-tag {
