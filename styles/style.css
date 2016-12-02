@@ -87,7 +87,6 @@ body {
 
 #card figure {
     position: absolute;
-    top: 25%;
     border-style: solid;
     border-width: 5px;
     border-color: #C0B283;
@@ -146,6 +145,10 @@ body {
     #card {
         width: 800px;
         height: 400px;
+    }
+
+    #card figure {
+        top: 25%;
     }
 
     .name-tag {
