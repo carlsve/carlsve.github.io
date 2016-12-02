@@ -35,7 +35,7 @@ Muted Tones Pallette
 
 .name-tag {
     position: absolute;
-    padding-right: 50px;
+    padding-right: 30px;
     top: 0;
     right: 0;
     color: #C0B283;
@@ -82,8 +82,7 @@ body {
     height: 400px;
     transform-style: preserve-3d;
     transform-origin: right center;
-    transition: transform 1s;
-    margin: auto;
+    transition: transform 1s
 }
 
 #card figure {
@@ -114,30 +113,23 @@ body {
     transform: translateZ(1px) translateX( -100%) rotateY( 180deg);
 }
 
-
 /* unvisited link */
-
-a:link {
+#card a:link {
     color: #F4F4F4;
+    text-decoration:underline;
 }
-
 
 /* visited link */
-
-a:visited {
+#card a:visited {
     color: #F4F4F4;
 }
 
-
 /* mouse over link */
-
-a:hover {
+#card a:hover {
     color: #C0B283;
 }
 
-
 /* selected link */
-
-a:active {
+#card a:active {
     color: #C0B283;
 }
