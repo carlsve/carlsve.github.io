@@ -62,8 +62,8 @@ body {
     font-weight: 400;
     font-size: 14px;
     color: #F4F4F4;
-    width: 600px;
-    height: 300px;
+    width: 800px;
+    height: 400px;
     transform-style: preserve-3d;
     transform-origin: right center;
     transition: transform 1s;
