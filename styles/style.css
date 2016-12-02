@@ -9,6 +9,7 @@ Muted Tones Pallette
 #373737
 */
 
+
 /* FRONT SIDE */
 
 .description {
@@ -54,8 +55,8 @@ Muted Tones Pallette
 /* WEB PAGE */
 
 body {
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
     background: #DCD0C0;
     background-image: url("../images/symphony.png");
     background-repeat: repeat;
@@ -82,7 +83,7 @@ body {
     transform-style: preserve-3d;
     transform-origin: right center;
     transition: transform 1s;
-    margin:auto;
+    margin: auto;
 }
 
 #card figure {
@@ -113,23 +114,31 @@ body {
     transform: translateZ(1px) translateX( -100%) rotateY( 180deg);
 }
 
+
 /* unvisited link */
+
 #card a:link {
     color: #F4F4F4;
-    text-decoration:underline;
+    text-decoration: underline;
 }
 
+
 /* visited link */
+
 #card a:visited {
     color: #F4F4F4;
 }
 
+
 /* mouse over link */
+
 #card a:hover {
     color: #C0B283;
 }
 
+
 /* selected link */
+
 #card a:active {
     color: #C0B283;
 }
