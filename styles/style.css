@@ -111,7 +111,7 @@ body {
 }
 
 #card.flipped {
-    transform: translateX( -100%) rotateY( 180deg);
+    transform: translateZ(1px) translateX( -100%) rotateY( 180deg);
 }
 
 
