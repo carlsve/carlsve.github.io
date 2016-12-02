@@ -53,6 +53,10 @@ Muted Tones Pallette
 
 /* WEB PAGE */
 
+html {
+    -webkit-text-size-adjust: none;
+}
+
 body {
     width: 100%;
     height: 100%;
