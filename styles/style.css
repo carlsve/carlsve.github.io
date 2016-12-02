@@ -54,7 +54,15 @@ Muted Tones Pallette
 
 /* WEB PAGE */
 
+@media (max-width: 600px) {
+    body {
+        background: #F4F4F4;
+    }
+}
+
 body {
+    width:100%;
+    height:100%;
     background: #DCD0C0;
     background-image: url("../images/symphony.png");
     background-repeat: repeat;
