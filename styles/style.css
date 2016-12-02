@@ -78,8 +78,8 @@ body {
     font-weight: 400;
     font-size: 14px;
     color: #F4F4F4;
-    width: 800px;
-    height: 400px;
+    width: 400px;
+    height: 800px;
     transform-style: preserve-3d;
     transform-origin: right center;
     transition: transform 1s;
@@ -141,4 +141,11 @@ body {
 
 #card a:active {
     color: #C0B283;
+}
+
+@media (max-resolution: 1dppx) {
+    #card {
+        width: 800px;
+        height: 400px;
+    }
 }
