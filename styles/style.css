@@ -35,12 +35,11 @@ Muted Tones Pallette
 
 .name-tag {
     position: absolute;
-    padding-right: 50px;
+    padding-right: 20px;
     top: 0;
     right: 0;
     color: #C0B283;
-    font-size: 50px;
-    height: 25%;
+    font-size: 20px;
     text-align: right;
 }
 
@@ -143,9 +142,16 @@ body {
     color: #C0B283;
 }
 
-@media (max-resolution: 1dppx) {
+@media (max-resolution: 1dppx), (max-resolution: 2dppx) {
     #card {
         width: 800px;
         height: 400px;
+    }
+
+    .name-tag {
+        padding-right: 50px;
+        color: #C0B283;
+        font-size: 50px;
+        height:25%;
     }
 }
