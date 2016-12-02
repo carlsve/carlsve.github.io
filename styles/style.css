@@ -78,7 +78,7 @@ body {
     font-size: 14px;
     color: #F4F4F4;
     width: 400px;
-    height: 800px;
+    height: 600px;
     transform-style: preserve-3d;
     transform-origin: right center;
     transition: transform 1s;
