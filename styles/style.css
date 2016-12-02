@@ -44,7 +44,7 @@ Muted Tones Pallette
 }
 
 .name-tag p {
-    font-size: 20px;
+    font-size: 18px;
 }
 
 
@@ -156,5 +156,9 @@ body {
         color: #C0B283;
         font-size: 50px;
         height:25%;
+    }
+
+    .name-tag p {
+        font-size: 20px;
     }
 }
