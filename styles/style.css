@@ -9,7 +9,6 @@ Muted Tones Pallette
 #373737
 */
 
-
 /* FRONT SIDE */
 
 .description {
@@ -35,7 +34,7 @@ Muted Tones Pallette
 
 .name-tag {
     position: absolute;
-    padding-right: 30px;
+    padding-right: 50px;
     top: 0;
     right: 0;
     color: #C0B283;
@@ -82,7 +81,8 @@ body {
     height: 400px;
     transform-style: preserve-3d;
     transform-origin: right center;
-    transition: transform 1s
+    transition: transform 1s;
+    margin:auto;
 }
 
 #card figure {
