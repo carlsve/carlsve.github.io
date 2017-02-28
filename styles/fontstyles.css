@@ -58,7 +58,7 @@ a {
 
 article > h1 {
     font-family: 'Playfair Display', serif;
-    font-family: bolder;
+    font-weight: bolder;
     color: #21303F;
     font-size: 24px;
     margin-top: 40px;
