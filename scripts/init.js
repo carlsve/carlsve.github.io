@@ -20,16 +20,10 @@ burgerContainer.onclick = function () {
 /* ------ LOW-RES LOAD-IN IMAGE HANDLER ------ */
 // gradually loads in
 
-document.querySelector("#load-in").addEventListener('load', function() {
-    var hero = document.querySelector("hero");
+document.addEventListener("DOMContentLoaded", function () {
+    var hero = document.querySelector(".hero");
 
     hero.classList.add("loaded");
-    hero.classList.remove("blur_on_load");
-});
-
-document.querySelector("#load-in-big").addEventListener('load', function () {
-    var hero = document.querySelector("hero");
-
     hero.classList.add("loaded_big");    
     hero.classList.remove("blur_on_load");
 });
