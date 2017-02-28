@@ -19,18 +19,20 @@ burgerContainer.onclick = function () {
 
 /* ------ LOW-RES LOAD-IN IMAGE HANDLER ------ */
 // gradually loads in
-function upgradeImage(object) {
-    var hero = document.getElementsByClassName("hero")[0];
 
-    if (object.id === "load-in") {
-        hero.classList.add("loaded");
-    } else if (object.id === "load-in-big") {
-        hero.classList.add("loaded_big")
-    }
+document.querySelector("#load-in").addEventListener('load', function() {
+    var hero = document.querySelector("hero");
+
+    hero.classList.add("loaded");
     hero.classList.remove("blur_on_load");
-}
+}, true);
 
+document.querySelector("#load-in-big").addEventListener('load', function () {
+    var hero = document.querySelector("hero");
 
+    hero.classList.add("loaded_big");    
+    hero.classList.remove("blur_on_load");
+}, true);
 
 /*-------SCROLLBAR GRADIENT FIX -------
 
