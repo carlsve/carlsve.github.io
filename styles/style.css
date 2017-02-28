@@ -13,21 +13,21 @@ body {
     display: -moz-box;
     display: -ms-box;
     display: box;
-    
-    -ms-flex-direction: column;
+
     -webkit-box-orient: vertical;
-    -moz-box-orient: vertical;
-    -ms-box-orient: vertical;
-    box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+
     background-color: "#ffffff";
 
 }
 
 .hero {
 
-    background-color: #F6F8F9; 
+    background-color: #F6F8F9;
 
-    background: url("../images/hero.jpg") no-repeat center center;
+    background: url("../images/herotiny.jpg") no-repeat center center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -36,21 +36,28 @@ body {
     height: 100%;
     min-height:100%;
     width: 100%;
-    -ms-flex: 0 100%;
-    -webkit-box-flex:  0;
-    -moz-box-flex:  0;
-    -ms-box-flex:  0;
-    box-flex:  0;
 
     text-align: center;
-    transition: all 0.1s ease-out, background-position 0;
+    transition: filter .3s;
+}
+
+.hero.loaded {
+  background-image: url("../images/hero.jpg");
+}
+
+.blur_on_load {
+    -webkit-filter: blur(10px);
+    -moz-filter: blur(10px);
+    -o-filter: blur(10px);
+    -ms-filter: blur(10px);
+    filter: blur(10px);
 }
 
 .hidden {
     display: none;
 }
 
-.hero_banner { 
+.hero_banner {
     left: 0;
     transition:all 0.4s ease;
 
@@ -74,22 +81,16 @@ body {
 }
 
 .container {
-    
+
     margin-top: 60px;
     margin-left: 40px;
     margin-right: 40px;
 
     transition: all 1s linear;
-    
+
 }
 
 .content {
-
-    -ms-flex: 0 100%;
-    -webkit-box-flex:  0;
-    -moz-box-flex:  0;
-    -ms-box-flex:  0;
-    box-flex:  0;
     height: 100%;
 
     display: -ms-flexbox;
@@ -98,11 +99,10 @@ body {
     display: -ms-box;
     display: box;
 
-    -ms-flex-direction: column;
     -webkit-box-orient: vertical;
-    -moz-box-orient: vertical;
-    -ms-box-orient: vertical;
-    box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
 
     transition: all 1s linear;
 }
@@ -120,7 +120,7 @@ body {
     margin-left: auto;
     margin-right: auto;
     margin-top: 80px;
-    margin-bottom: 80px;    
+    margin-bottom: 80px;
 }
 
 .gotomedium {
@@ -143,25 +143,16 @@ body {
         transition: all 0.4s linear, background-position 0;
     }
 
-    .hero {
-        background: url("../images/herobig.jpg") no-repeat center center;
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
-        background-size: cover;
+    .hero.loaded {
+        background-image: url("../images/herobig.jpg");
         height: 100%;
         min-height: 100%;
-        -ms-flex: 0 100%;
-        -webkit-box-flex:  0;
-        -moz-box-flex:  0;
-        -ms-box-flex:  0;
-        box-flex:  0;
 
         transition: all 0.4s ease, background-position 0;
         text-align: center;
     }
 
-    .hero_banner { 
+    .hero_banner {
         width: 580px;
         height: 262px;
         margin-left: -290px;
@@ -181,7 +172,7 @@ body {
         margin: 0 auto;
         bottom: 7%;
         left: 75%;
-        
+
     }
 
     .rectangle {
@@ -195,12 +186,12 @@ body {
         display: -moz-box;
         display: -ms-box;
         display: box;
-        
-        -ms-flex-direction: row;
+
         -webkit-box-orient: horizontal;
-        -moz-box-orient: horizontal;
-        -ms-box-orient: horizontal;
-        box-orient: horizontal;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+                flex-direction: row;
+
         background-color: "#ffffff";
     }
 
@@ -228,6 +219,9 @@ body {
 
         width: 50%;
         height: 50px;
+
+        /*allow scrolling the parrent*/
+        pointer-events: none;
 
         /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,ffffff+100&0+0,1+100 */
         background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%); /* FF3.6-15 */
@@ -379,7 +373,7 @@ body {
       -ms-user-select: none;
           user-select: none;
   -webkit-tap-highlight-color: transparent;
-  
+
 }
 .header ul.menu {
   position: relative;
@@ -390,7 +384,7 @@ body {
 }
 
 .header ul.menu li.menu-item::after {
-    
+
     width: 50px;
     height: 50px;
 }
@@ -560,7 +554,7 @@ body {
 	-webkit-transition-delay: 0s, 0.2s; transition-delay: 0s, 0.2s;
 }
 #menu_icon span:after {
-    
+
 	-webkit-transition-property: margin, -webkit-transform; transition-property: margin, transform, background;
 	-webkit-transition-duration: 0.2s; transition-duration: 0.2s;
 	-webkit-transition-delay: 0.2s, 0s; transition-delay: 0.2s, 0s;
@@ -655,16 +649,11 @@ body {
         background-color: #ffffff;
         display: flex;
         margin-bottom: 40px;
-        
+
     }
 
     .nav_item {
         width: 20%;
-        -ms-flex: 0 20%;
-        -webkit-box-flex:  0;
-        -moz-box-flex:  0;
-        -ms-box-flex:  0;
-        box-flex:  0;
         color: #21303F;
     }
 }

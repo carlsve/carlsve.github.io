@@ -17,6 +17,30 @@ burgerContainer.onclick = function () {
     content.classList.toggle("deactivated");
 };
 
+
+/* ------ LOW-RES LOAD-IN IMAGE HANDLER ------ */
+var hero = document.querySelector(".hero");
+
+hero.classList.add("blur_on_load");
+
+// gradually loads in
+function upgradeImage() {
+    if (this.id === "load-in") {
+        hero.classList.add("loaded");
+    } else if (this.id === "load-in-big") {
+        hero.classList.add("loaded_big")
+    }
+    hero.classList.remove("blur_on_load");
+}
+
+var img = document.querySelector('#load-in');
+
+if (img.complete) {
+  upgradeImage.call(img);
+} else {
+  img.addEventListener('load', upgradeImage)
+}
+
 /*-------SCROLLBAR GRADIENT FIX -------
 
 bug-description: the gradient that makes the
