@@ -17,17 +17,6 @@ burgerContainer.onclick = function () {
     content.classList.toggle("deactivated");
 };
 
-/* ------ LOW-RES LOAD-IN IMAGE HANDLER ------ */
-// gradually loads in
-
-document.addEventListener("DOMContentLoaded", function () {
-    var hero = document.querySelector(".hero");
-
-    hero.classList.add("loaded");
-    hero.classList.add("loaded_big");    
-    hero.classList.remove("blur_on_load");
-});
-
 /*-------SCROLLBAR GRADIENT FIX -------
 
 bug-description: the gradient that makes the

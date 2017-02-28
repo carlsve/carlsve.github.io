@@ -27,7 +27,7 @@ body {
 
     background-color: #F6F8F9; 
 
-    background: url("../images/herotiny.jpg") no-repeat center center;
+    background: url("../images/hero.jpg") no-repeat center center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -44,24 +44,6 @@ body {
 
     text-align: center;
     transition: all 0.1s ease-out, background-position 0;
-}
-
-.blur_on_load {
-
-    -webkit-filter: blur(10px);
-    -moz-filter: blur(10px);
-    -o-filter: blur(10px);
-    -ms-filter: blur(10px);
-    filter: blur(10px);
-}
-
-.hero.loaded {
-    background: url("../images/hero.jpg") no-repeat center center;
-
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
 }
 
 .hidden {
@@ -162,6 +144,11 @@ body {
     }
 
     .hero {
+        background: url("../images/herobig.jpg") no-repeat center center;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
         height: 100%;
         min-height: 100%;
         -ms-flex: 0 100%;
@@ -172,15 +159,6 @@ body {
 
         transition: all 0.4s ease, background-position 0;
         text-align: center;
-    }
-
-    .hero.loaded_big {
-        background: url("../images/herobig.jpg") no-repeat center center;
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
-        background-size: cover;
-
     }
 
     .hero_banner { 
