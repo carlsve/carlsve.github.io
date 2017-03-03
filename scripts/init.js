@@ -41,24 +41,3 @@ if (img.complete) {
   img.addEventListener('load', upgradeImage)
 }
 
-/*-------SCROLLBAR GRADIENT FIX -------
-
-bug-description: the gradient that makes the
-    medium text vanish on scroll, is visible and
-    can look bad during resize.
-
-fix: on window resize event, add class 'noshow'
-    which sets display to none.
-*/
-var visibilityTimer;
-
-window.addEventListener('resize', function () {
-    clearTimeout(visibilityTimer);
-
-    var gradient = document.getElementById('gradient');
-    gradient.style.visibility = 'hidden';
-
-    visibilityTimer = setTimeout(() => {
-        gradient.style.visibility = 'visible';
-    }, 1000);
-}, true)

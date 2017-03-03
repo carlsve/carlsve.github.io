@@ -85,9 +85,6 @@ body {
     margin-top: 60px;
     margin-left: 40px;
     margin-right: 40px;
-
-    transition: all 1s linear;
-
 }
 
 .content {
@@ -103,8 +100,6 @@ body {
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
-
-    transition: all 1s linear;
 }
 
 .rectangle {
@@ -140,7 +135,6 @@ body {
         margin: 80px;
         margin-bottom: 80px;
 
-        transition: all 0.4s linear, background-position 0;
     }
 
     .hero.loaded {
@@ -228,12 +222,6 @@ body {
         background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* Chrome10-25,Safari5.1-6 */
         background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
-
-        -webkit-transition: opacity 3s ease-in;
-       -moz-transition: opacity 3s ease-in;
-        -ms-transition: opacity 3s ease-in;
-         -o-transition: opacity 3s ease-in;
-            transition: opacity 3s ease-in;
     }
 
     .container {
