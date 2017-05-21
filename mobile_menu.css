@@ -117,4 +117,8 @@
     .modal-menu .is-active {
         display: none;
     }
+
+	.main-content.menu-opened {
+		display: block;
+	}
 }

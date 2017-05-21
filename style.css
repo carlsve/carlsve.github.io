@@ -164,6 +164,24 @@ article > a {
     }
 }
 
+@media screen and (min-width: 960px) {
+    header {
+        width: 100%;
+        min-width: 900px;
+        max-width: 900px;
+    }   
+
+    main {
+        min-width: 900px;
+        max-width: 900px;
+        width: 100%;
+    }
+
+    .portfolio .articles {
+        max-width: 900px;
+    }
+}
+
 @media screen and (min-width: 1265px) {
     
     h1 {
@@ -173,7 +191,7 @@ article > a {
     h3 {
         font-size: 36px;
     }
-    
+
     header {
         width: 100%;
         min-width: 1205px;
