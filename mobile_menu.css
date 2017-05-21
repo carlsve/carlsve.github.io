@@ -119,6 +119,12 @@
     }
 
 	.main-content.menu-opened {
+		display: block;
+	}
+}
+
+@media screen and (min-width: 1265px) {
+	.main-content.menu-opened {
 		display: flex;
 	}
 }
