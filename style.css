@@ -1,0 +1,206 @@
+html {
+    height: 100%;
+}
+
+body {
+    margin: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+p, a, h1, h2, h3, h4 {
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+p, a {
+    font-family: 'Quattrocento', serif;
+    font-size: 14px;
+    line-height: 24px;
+}
+
+a {
+    display: block;
+    text-decoration: none;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Oswald', sans-serif;
+}
+
+h1 {
+    font-weight: 700;
+    font-size: 72px;
+}
+
+h2 {
+    font-weight: 900;
+    font-size: 36px;
+    letter-spacing: 1px;
+}
+
+h3 {
+    font-weight: 600;
+    font-size: 30px;
+    letter-spacing: 1px;
+}
+
+h4 {
+    font-weight: 600;
+    font-size: 20px;
+}
+
+header {
+    width: 100%;
+    min-width: 290px;
+    max-width: 410px;
+}   
+
+.title {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 240px;
+}
+
+.title > h1 {
+    margin: 0;
+    padding: 0;
+    line-height: 66px;
+    letter-spacing: 1px;
+}
+
+.links {
+    display: none;
+}
+
+main {
+    margin: 0;
+    min-width: 290px;
+    max-width: 410px;
+}
+
+main > section {
+    margin-top: 60px;
+    width: 100%;
+}
+
+main > section > h2 {
+    display: block;
+    margin-bottom: 30px;
+}
+
+.portfolio .articles {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+article {
+    min-width: 290px;
+    max-width: 410px;
+    margin-bottom: 24px;
+    min-height: 330px;
+}
+
+article > .line {
+    height:1px;
+    border-bottom:1px solid #333;
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+article > a {
+    text-decoration: underline;
+}
+
+@media screen and (min-width: 625px) {
+    header {
+        width: 100%;
+        min-width: 595px;
+        max-width: 595px;
+    }   
+
+    main {
+        min-width: 595px;
+        max-width: 595px;
+        width: 100%;
+    }
+
+    .portfolio .articles {
+        max-width: 595px;
+    }
+
+    article {
+        width: 290px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+
+    body {
+        margin: 30px;
+    }
+
+    header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .title {
+        height: 200px;
+    }
+
+    .links {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        text-align: right;
+    }
+}
+
+@media screen and (min-width: 1265px) {
+    
+    h1 {
+        font-size: 94px;
+    }
+    
+    header {
+        width: 100%;
+        min-width: 1205px;
+        max-width: 1205px;
+    }   
+
+    .title {
+        height: 260px;
+    }
+    
+    .title > h1 {
+        margin: 0;
+        padding: 0;
+        line-height: 86px;
+        letter-spacing: 1px;
+    }
+
+
+    main {
+        min-width: 1205px;
+        max-width: 1205px;
+        width: 100%;
+        display: flex;
+        
+    }
+
+    .bio {
+        order: 2;
+        width: 290px;
+    }
+
+    .portfolio .articles {
+        max-width: 915px;
+    }
+}
