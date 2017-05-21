@@ -119,6 +119,6 @@
     }
 
 	.main-content.menu-opened {
-		display: block;
+		display: flex;
 	}
 }
