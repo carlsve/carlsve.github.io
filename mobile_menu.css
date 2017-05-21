@@ -10,11 +10,19 @@
 .modal-menu.menu-opened nav {
 	padding-top: 30px;
 	padding-bottom: 30px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
 	position: fixed;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-around;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
+	-webkit-box-align: center;
+	    -ms-flex-align: center;
+	        align-items: center;
+	-ms-flex-pack: distribute;
+	    justify-content: space-around;
 	top: 0;
 	left: 0;
     background: #333;
@@ -80,7 +88,7 @@
 	-webkit-transition-delay: 0.2s; transition-delay: 0.2s;
 }
 #menu_icon span:before {
-	-webkit-transition-property: margin, -webkit-transform; transition-property: margin, transform, background;
+	-webkit-transition-property: margin, -webkit-transform; -webkit-transition-property: margin, background, -webkit-transform; transition-property: margin, background, -webkit-transform; transition-property: margin, transform, background; transition-property: margin, transform, background, -webkit-transform;
 	-webkit-transition-duration: 0.2s; transition-duration: 0.2s;
 	-webkit-transition-delay: 0.2s, 0s; transition-delay: 0.2s, 0s;
 
@@ -93,7 +101,7 @@
 }
 #menu_icon span:after {
     
-	-webkit-transition-property: margin, -webkit-transform; transition-property: margin, transform, background;
+	-webkit-transition-property: margin, -webkit-transform; -webkit-transition-property: margin, background, -webkit-transform; transition-property: margin, background, -webkit-transform; transition-property: margin, transform, background; transition-property: margin, transform, background, -webkit-transform;
 	-webkit-transition-duration: 0.2s; transition-duration: 0.2s;
 	-webkit-transition-delay: 0.2s, 0s; transition-delay: 0.2s, 0s;
 
@@ -125,6 +133,8 @@
 
 @media screen and (min-width: 1265px) {
 	.main-content.menu-opened {
+		display: -webkit-box;
+		display: -ms-flexbox;
 		display: flex;
 	}
 }
