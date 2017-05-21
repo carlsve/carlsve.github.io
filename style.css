@@ -4,19 +4,10 @@ html {
 
 body {
     margin: 15px;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-box-pack: start;
-        -ms-flex-pack: start;
-            justify-content: flex-start;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 p, a, h1, h2, h3, h4 {
@@ -69,16 +60,9 @@ header {
 }   
 
 .title {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-box-pack: end;
-        -ms-flex-pack: end;
-            justify-content: flex-end;
+    flex-direction: column;
+    justify-content: flex-end;
     height: 240px;
 }
 
@@ -110,18 +94,11 @@ main > section > h2 {
 }
 
 .portfolio .articles {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
-    -webkit-box-pack: justify;
-        -ms-flex-pack: justify;
-            justify-content: space-between;
-    -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: stretch;
 }
 
 article {
@@ -167,6 +144,11 @@ article > a {
     article {
         width: 290px;
     }
+
+
+    .articles > article:nth-child(2n + 1) {
+        margin-right: 15px;
+    }
 }
 
 @media screen and (min-width: 768px) {
@@ -176,12 +158,8 @@ article > a {
     }
 
     header {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
-                justify-content: space-between;
+        justify-content: space-between;
     }
 
     .title {
@@ -189,15 +167,9 @@ article > a {
     }
 
     .links {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: column;
-                flex-direction: column;
-        -ms-flex-pack: distribute;
-            justify-content: space-around;
+        flex-direction: column;
+        justify-content: space-around;
         text-align: right;
     }
 }
@@ -217,6 +189,18 @@ article > a {
 
     .portfolio .articles {
         max-width: 900px;
+    }
+
+    .articles > article:nth-child(2n + 1) {
+        margin-right: 0;
+    }
+
+    .articles > article:nth-child(3n + 1) {
+        margin-right: 15px;
+    }
+    
+    .articles > article:nth-child(3n + 2) {
+        margin-right: 15px;
     }
 }
 
@@ -252,16 +236,12 @@ article > a {
         min-width: 1205px;
         max-width: 1205px;
         width: 100%;
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
         
     }
 
     .bio {
-        -webkit-box-ordinal-group: 3;
-            -ms-flex-order: 2;
-                order: 2;
+        order: 2;
         width: 290px;
     }
 
