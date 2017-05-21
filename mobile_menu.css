@@ -8,8 +8,6 @@
 }
 
 .modal-menu.menu-opened nav {
-	padding-top: 30px;
-	padding-bottom: 30px;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -27,7 +25,7 @@
 	left: 0;
     background: #333;
     width: 100%;
-    height: 100vh;
+    height: 100%;
 }
 
 .modal-menu h3 {
