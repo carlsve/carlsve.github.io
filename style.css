@@ -119,6 +119,7 @@ article > a {
 }
 
 @media screen and (min-width: 625px) {
+
     header {
         width: 100%;
         min-width: 595px;
@@ -167,6 +168,10 @@ article > a {
     
     h1 {
         font-size: 94px;
+    }
+    
+    h3 {
+        font-size: 36px;
     }
     
     header {

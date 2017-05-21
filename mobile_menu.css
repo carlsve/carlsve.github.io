@@ -1,13 +1,42 @@
+
+.main-content.menu-opened {
+	display: none;
+}
+
+.modal-menu nav {
+	display: none;
+}
+
+.modal-menu.menu-opened nav {
+	padding-top: 30px;
+	padding-bottom: 30px;
+    display: flex;
+	position: fixed;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+	top: 0;
+	left: 0;
+    background: #333;
+    width: 100%;
+    height: 100vh;
+}
+
+.modal-menu h3 {
+	font-size: 36px;
+	color: white;
+}
+
 /* btn */
-#burger-container {
+.burger-container {
     position: relative;
 }
 
 #menu_icon {
 	position: absolute;
 	display:  inline-block;
-    top: 0;
-    right: 0;
+    top: 15px;
+    right: 15px;
 	width: 29px;
 	height: 23px;
 }
@@ -21,11 +50,16 @@
 	position: absolute;
 	content: '';
 }
+
 #menu_icon span, #menu_icon span:before, #menu_icon span:after {
 	width: 29px;
 	height: 3px;
 	background-color: #333;
 	display: block;
+}
+
+.burger-container.menu-opened #menu_icon span, .burger-container.menu-opened #menu_icon span:before, .burger-container.menu-opened #menu_icon span:after {
+	background-color: #fff;
 }
 
 #menu_icon span:before {
@@ -35,8 +69,52 @@
 	margin-top: 10px;
 }
 
+#menu_icon span {
+
+	-webkit-transition-duration: 0s; transition-duration: 0s;
+	-webkit-transition-delay: 0.2s; transition-delay: 0.2s;
+}
+.burger-container.menu-opened #menu_icon span {
+	background-color: rgba(255,255,255,0.0);
+
+	-webkit-transition-delay: 0.2s; transition-delay: 0.2s;
+}
+#menu_icon span:before {
+	-webkit-transition-property: margin, -webkit-transform; transition-property: margin, transform, background;
+	-webkit-transition-duration: 0.2s; transition-duration: 0.2s;
+	-webkit-transition-delay: 0.2s, 0s; transition-delay: 0.2s, 0s;
+
+}
+.burger-container.menu-opened #menu_icon span:before {
+  background-color: #ffffff;
+	margin-top: 0;
+	-webkit-transform: rotate(45deg); transform: rotate(45deg);
+	-webkit-transition-delay: 0s, 0.2s; transition-delay: 0s, 0.2s;
+}
+#menu_icon span:after {
+    
+	-webkit-transition-property: margin, -webkit-transform; transition-property: margin, transform, background;
+	-webkit-transition-duration: 0.2s; transition-duration: 0.2s;
+	-webkit-transition-delay: 0.2s, 0s; transition-delay: 0.2s, 0s;
+
+}
+.burger-container.menu-opened #menu_icon span:after {
+  background-color: #ffffff;
+	margin-top: 0;
+	-webkit-transform: rotate(-45deg); transform: rotate(-45deg);
+	-webkit-transition-delay: 0s, 0.2s; transition-delay: 0s, 0.2s;
+}
+
 @media screen and (min-width: 768px) {
-    #burger-container {
+    .burger-container {
+        display: none;
+    }
+
+	.modal-menu {
+        display: none;
+    }
+
+    .modal-menu .is-active {
         display: none;
     }
 }
