@@ -1,9 +1,9 @@
 
 .main-content.menu-opened {
-	position: absolute;
-	transform: translateY(-100%);
-	transition: all 0.4s ease;
+	display: none
 }
+
+.main-content.menu-opened
 
 .modal-menu nav {
     width: 100%;
