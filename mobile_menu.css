@@ -1,6 +1,8 @@
 
 .main-content.menu-opened {
-	display: none;
+	position: absolute;
+	transform: translateY(-100%);
+	transition: all 0.4s ease;
 }
 
 .modal-menu nav {
