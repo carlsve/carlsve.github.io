@@ -312,3 +312,43 @@ article > a {
         max-width: 915px;
     }
 }
+
+
+@media screen and (min-width: 1570px) {
+    
+    header {
+        width: 100%;
+        min-width: 1510px;
+        max-width: 1510px;
+    }   
+
+    main {
+        min-width: 1510px;
+        max-width: 1510px;
+        width: 100%;
+    }
+
+    .portfolio .articles {
+        max-width: 1220px;
+    }
+    
+    .articles > article:nth-child(3n + 1) {
+        margin-right: 0px;
+    }
+    
+    .articles > article:nth-child(3n + 2) {
+        margin-right: 0px;
+    }
+    
+    .articles > article:nth-child(4n + 1) {
+        margin-right: 15px;
+    }
+    
+    .articles > article:nth-child(4n + 2) {
+        margin-right: 15px;
+    }
+    
+    .articles > article:nth-child(4n + 3) {
+        margin-right: 15px;
+    }
+}
