@@ -16,7 +16,7 @@
     <title>Carl Petter Svensson</title>
 </head>
 
-<body>
+<body id="body">
     <div class="modal-menu">
         <nav>
             <a target="_blank" rel="noopener" href="mailto:karlpetter.svensson91@gmail.com">
@@ -148,6 +148,9 @@
             burgerContainer.classList.toggle('menu-opened');
             var burgerContainer = document.querySelector('.main-content');
             burgerContainer.classList.toggle('menu-opened');
+            var body = document.getElementById('body');
+            body.classList.toggle('menu-opened');
+
         }
     </script>
 </body>
