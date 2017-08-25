@@ -1,5 +1,5 @@
 
-.main-content.menu-opened {
+#body.menu-opened {
 	overflow: hidden;
 }
 
