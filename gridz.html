@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <style>
+    html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#box {
+    width: 100%;
+    height: 100%;
+    background-color: gray;
+    overflow: hidden;
+}
+
+.item {
+    height: 20%;
+    width: 50%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+@media screen and (min-width: 640px) {
+    .item {
+        width: 33.333%;
+    }
+}
+
+@media screen and (min-width: 960px) {
+    .item {
+        width: 25%;
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    .item {
+        width: 20%;
+    }
+}
+
+@media screen and (min-width: 1600px) {
+    .item {
+        width: 16.666667%;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .item {
+        width: 14.285714%;
+    }
+}
+
+@media screen and (min-width: 2240px) {
+    .item {
+        width: 12.5%;
+    }
+}
+    </style>
+</head>
+<body>
+  <div id="box"></div>
+<script>
+    function getColor() {
+        return '#' + Array.apply(0, {length: 6}).map(function(_) { return Math.floor(Math.random() * 16).toString(16) }).join('')
+    }
+    var colors = Array.apply(null, { length: 70 }).map(function() { return getColor()});
+    console.log(colors);
+
+function shuffle (array) {
+  var i = 0
+    , j = 0
+    , temp = null
+
+  for (i = array.length - 1; i > 0; i -= 1) {
+    j = Math.floor(Math.random() * (i + 1))
+    temp = array[i]
+    array[i] = array[j]
+    array[j] = temp
+  }
+}
+
+shuffle(colors)
+
+var box = document.querySelector('#box')
+
+colors.forEach(function(color) {
+    var item = document.createElement('div')
+    item.style.backgroundColor = color
+    item.classList.add('item')
+    box.appendChild(item)
+})
+
+</script>
+</body>
+</html>
