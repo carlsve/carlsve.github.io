@@ -94,10 +94,12 @@ function drawPlayer() {
     var linepos;
     var i;
     var formula;
+    var dist;
 
     mapContext.fillStyle = player.color
     mapContext.fillRect(player.pos.x, player.pos.y, gridSize, gridSize)
     mapContext.beginPath();
+    viewContext.beginPath();
     viewAbsVals = []
     for (i = 0; i < 320; i += 1) {
         formula = player.dir + (-1*Math.PI/6 + 2*i/320 * Math.PI/6);
@@ -105,25 +107,15 @@ function drawPlayer() {
         linepos = castRay(player.pos, formula)
         mapContext.lineTo(linepos.x, linepos.y);
         mapContext.stroke();
-        viewAbsVals.push(
-            Math.sqrt(
-                (player.pos.x - linepos.x)*(player.pos.x - linepos.x) +
-                (player.pos.y - linepos.y)*(player.pos.y - linepos.y)
-            )
+
+        dist = Math.sqrt(
+            (player.pos.x - linepos.x)*(player.pos.x - linepos.x) +
+            (player.pos.y - linepos.y)*(player.pos.y - linepos.y)
         )
-    }
-}
-
-function drawView() {
-    var i;
-    var dist;
-
-    viewContext.beginPath();
-    for (i = 0; i < 320; i += 1) {
-        dist = viewAbsVals[i];
-        viewContext.moveTo(i, 240/2 - (dist / 2))
-        viewContext.lineTo(i, 240/2 + (dist / 2))
+        viewContext.moveTo(i, 240/2 - (6000/dist))
+        viewContext.lineTo(i, 240/2 + (6000/dist))
         viewContext.stroke();
+
     }
 }
 
@@ -206,7 +198,6 @@ function gameLoop() {
     drawMap()
     drawViewFrame()
     drawPlayer()
-    drawView();
 }
 
 setInterval(gameLoop, 33);
