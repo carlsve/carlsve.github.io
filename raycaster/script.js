@@ -77,14 +77,39 @@ function drawMap() {
     }
 }
 
-// nothing special
+//
 function drawPlayer() {
     ctx.fillStyle = player.color
     ctx.fillRect(player.pos.x, player.pos.y, gridSize, gridSize)
     ctx.beginPath();
     ctx.moveTo(player.pos.x + gridSize / 2, player.pos.y + gridSize / 2);
-    ctx.lineTo(player.pos.x + gridSize / 2 + 20 * Math.cos(player.dir), player.pos.y + gridSize / 2 + 20 * Math.sin(player.dir));
+    var linepos = castRay(player.pos, player.dir)
+    ctx.lineTo(linepos.x, linepos.y);
     ctx.stroke();
+
+    //ctx.lineTo(player.pos.x + gridSize / 2 + 100 * Math.cos(player.dir + Math.PI/6), player.pos.y + gridSize / 2 + 100 * Math.sin(player.dir + Math.PI/6));
+    //ctx.stroke();
+    //ctx.moveTo(player.pos.x + gridSize / 2, player.pos.y + gridSize / 2);
+    //ctx.lineTo(player.pos.x + gridSize / 2 + 100 * Math.cos(player.dir - Math.PI/6), player.pos.y + gridSize / 2 + 100 * Math.sin(player.dir - Math.PI/6));
+    //ctx.stroke();
+}
+
+function castRay(pos, dir) {
+    for (var i = 0; i < 20; i += 1) {
+        if (collisionCheck({
+            x: pos.x + gridSize / 2 + i*16 * Math.cos(dir),
+            y: pos.y + gridSize / 2 + i*16 * Math.sin(dir)
+        })) {
+            return {
+                x: pos.x + gridSize / 2 + i*16 * Math.cos(dir),
+                y: pos.y + gridSize / 2 + i*16 * Math.sin(dir)
+            }
+        }
+    }
+    return {
+        x: pos.x + gridSize / 2 + i*16 * Math.cos(dir),
+        y: pos.y + gridSize / 2 + i*16 * Math.sin(dir)
+    }
 }
 
 function clear() { c.width = c.width }
