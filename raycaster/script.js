@@ -6,16 +6,23 @@ var gridSize  = 16
 
 // set size
 // html canvas interaction stuff.
-var c = document.getElementById("minimap");
-c.width = mapWidth * gridSize
-c.height = mapHeight * gridSize
-var ctx = c.getContext("2d");
+var mapCanvas = document.getElementById("minimap");
+mapCanvas.width  = mapWidth * gridSize
+mapCanvas.height = mapHeight * gridSize
+var mapContext = mapCanvas.getContext("2d");
+
+var viewCanvas = document.getElementById("playerview");
+viewCanvas.width = 320;
+viewCanvas.height = 240
+var viewContext = viewCanvas.getContext("2d")
 
 var player = {
     pos: {x:2 * gridSize,y:5 * gridSize},
     color: 'rgb(160,160,160)',
     dir: 0.0
 }
+
+var viewAbsVals = []
 
 var map = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -67,14 +74,19 @@ document.addEventListener('keyup', function(event) {
 
 // Draws block if map[y][x] == 1
 function drawMap() {
-    ctx.fillStyle = 'rgb(200,200,200)'
+    mapContext.fillStyle = 'rgb(200,200,200)'
     for (var y = 0; y < mapHeight; ++y) {
         for (var x = 0; x < mapWidth; ++x) {
             if (map[y][x]) {
-                ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize)
+                mapContext.fillRect(x * gridSize, y * gridSize, gridSize, gridSize)
             }
         }
     }
+}
+
+function drawViewFrame() {
+    viewContext.fillStyle = 'rgb(200,200,200)';
+    viewContext.fillRect(0, 0, 320, 240)
 }
 
 //
@@ -83,15 +95,35 @@ function drawPlayer() {
     var i;
     var formula;
 
-    ctx.fillStyle = player.color
-    ctx.fillRect(player.pos.x, player.pos.y, gridSize, gridSize)
-    ctx.beginPath();
-    for (i = 0; i < 160; i += 1) {
-        formula = player.dir + (-1*Math.PI/6 + 2*i/160 * Math.PI/6);
-        ctx.moveTo(player.pos.x + gridSize / 2, player.pos.y + gridSize / 2);
+    mapContext.fillStyle = player.color
+    mapContext.fillRect(player.pos.x, player.pos.y, gridSize, gridSize)
+    mapContext.beginPath();
+    viewAbsVals = []
+    for (i = 0; i < 320; i += 1) {
+        formula = player.dir + (-1*Math.PI/6 + 2*i/320 * Math.PI/6);
+        mapContext.moveTo(player.pos.x + gridSize / 2, player.pos.y + gridSize / 2);
         linepos = castRay(player.pos, formula)
-        ctx.lineTo(linepos.x, linepos.y);
-        ctx.stroke();
+        mapContext.lineTo(linepos.x, linepos.y);
+        mapContext.stroke();
+        viewAbsVals.push(
+            Math.sqrt(
+                (player.pos.x - linepos.x)*(player.pos.x - linepos.x) +
+                (player.pos.y - linepos.y)*(player.pos.y - linepos.y)
+            )
+        )
+    }
+}
+
+function drawView() {
+    var i;
+    var dist;
+
+    viewContext.beginPath();
+    for (i = 0; i < 320; i += 1) {
+        dist = viewAbsVals[i];
+        viewContext.moveTo(i, 240/2 - (dist / 2))
+        viewContext.lineTo(i, 240/2 + (dist / 2))
+        viewContext.stroke();
     }
 }
 
@@ -115,7 +147,7 @@ function castRay(pos, dir) {
     }
 }
 
-function clear() { c.width = c.width }
+function clear(c) { c.width = c.width }
 
 function movePlayer() {
     var move = keyboard.arrowUp    + (-1 * keyboard.arrowDown);
@@ -169,9 +201,12 @@ function intersects(pos1, pos2) {
 
 function gameLoop() {
     movePlayer()
-    clear()
+    clear(mapCanvas)
+    clear(viewCanvas)
     drawMap()
+    drawViewFrame()
     drawPlayer()
+    drawView();
 }
 
 setInterval(gameLoop, 33);
