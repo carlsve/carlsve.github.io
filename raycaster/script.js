@@ -84,7 +84,7 @@ function drawPlayer() {
     ctx.beginPath();
     ctx.moveTo(player.pos.x + gridSize / 2, player.pos.y + gridSize / 2);
     var linepos = castRay(player.pos, player.dir)
-    
+
     ctx.lineTo(linepos.x, linepos.y);
     ctx.stroke();
 
@@ -96,15 +96,17 @@ function drawPlayer() {
 }
 
 function castRay(pos, dir) {
-    for (var i = 0; i < 320; i += 1) {
-        if (collisionCheck({
+    var stepPos = {};
+    var i;
+
+    for (i = 0; i < 320; i += 1) {
+        stepPos = {
             x: pos.x + gridSize / 2 + i * Math.cos(dir),
             y: pos.y + gridSize / 2 + i * Math.sin(dir)
-        })) {
-            return {
-                x: pos.x + gridSize / 2 + i * Math.cos(dir),
-                y: pos.y + gridSize / 2 + i * Math.sin(dir)
-            }
+        }
+
+        if (map[Math.floor(stepPos.y / gridSize)][Math.floor(stepPos.x / gridSize)] === 1) {
+            return stepPos;
         }
     }
     return {
