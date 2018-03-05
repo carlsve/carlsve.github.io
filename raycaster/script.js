@@ -79,20 +79,20 @@ function drawMap() {
 
 //
 function drawPlayer() {
+    var linepos;
+    var i;
+    var formula;
+
     ctx.fillStyle = player.color
     ctx.fillRect(player.pos.x, player.pos.y, gridSize, gridSize)
     ctx.beginPath();
-    ctx.moveTo(player.pos.x + gridSize / 2, player.pos.y + gridSize / 2);
-    var linepos = castRay(player.pos, player.dir)
-
-    ctx.lineTo(linepos.x, linepos.y);
-    ctx.stroke();
-
-    //ctx.lineTo(player.pos.x + gridSize / 2 + 100 * Math.cos(player.dir + Math.PI/6), player.pos.y + gridSize / 2 + 100 * Math.sin(player.dir + Math.PI/6));
-    //ctx.stroke();
-    //ctx.moveTo(player.pos.x + gridSize / 2, player.pos.y + gridSize / 2);
-    //ctx.lineTo(player.pos.x + gridSize / 2 + 100 * Math.cos(player.dir - Math.PI/6), player.pos.y + gridSize / 2 + 100 * Math.sin(player.dir - Math.PI/6));
-    //ctx.stroke();
+    for (i = 0; i < 160; i += 1) {
+        formula = player.dir + (-1*Math.PI/6 + 2*i/160 * Math.PI/6);
+        ctx.moveTo(player.pos.x + gridSize / 2, player.pos.y + gridSize / 2);
+        linepos = castRay(player.pos, formula)
+        ctx.lineTo(linepos.x, linepos.y);
+        ctx.stroke();
+    }
 }
 
 function castRay(pos, dir) {
