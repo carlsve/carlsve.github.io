@@ -10,4 +10,5 @@ window.addEventListener('DOMContentLoaded', function() {
         a({ href: 'https://google.com' },'google')
       ),
       div({ className: 'hellp'}, 'hjälp mig')
+    )
 })
