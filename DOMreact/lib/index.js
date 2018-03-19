@@ -1,9 +1,13 @@
+
 window.addEventListener('DOMContentLoaded', function() {
   var root = document.getElementById('root')
 
-  root.innerHTML =
+  root.innerHTML = 
     div(
-      h1({ id: 'helloo', className: 'wasup', data: {hello:'hello'} },'outerheader', p('Lite mera text som ligger i h1?')),
+      h1({ id: 'helloo', className: 'wasup', data: { hello: 'what' } },
+        'outerheader',
+        p('Lite mera text som ligger i h1?')
+      ),
       div(
         h1('header'),
         p('lorem ipsum'),
@@ -11,4 +15,9 @@ window.addEventListener('DOMContentLoaded', function() {
       ),
       div({ className: 'hellp'}, 'hjälp mig')
     )
+
+  var helloworld = document.createElement('script')
+  helloworld.innerHTML = '';
+  helloworld.src = "./lib/helloworld.js"
+  root.appendChild(helloworld)
 })
