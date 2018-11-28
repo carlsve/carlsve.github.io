@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>INDA förslag!</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+</head>
+<body>
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item is-size-2 has-text-primary is-capitalized	has-text-weight-semibold" href="#">
+        Förslagsboxen!
+      </a>
+    </div>
+  </nav>
+  
+  <hr />
+  
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Förslag</h1>
+      <ul id="suggestions"></ul>
+    </div>
+  </section>
+
+  <hr />
+  
+  <section class="section">
+    <form id="add_suggestion" class="container">
+      <div class="field">
+        <label class="label">Lägg till förslag:</label>
+        <div class="control">
+          <input class="input is-primary" id="input_suggestion" type="text" name="suggestion" placeholder="Vad är datorer?">
+        </div>
+      </div>
+      
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-primary">Lägg till förslag!</button>
+        </div>
+      </div>
+    </form>
+  </section>
+  
+  <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
+  <script src="setup_firebase_listener.js"></script>
+  <script src="add_new_database_item.js"></script>
+</body>
+</html>
