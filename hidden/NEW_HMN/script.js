@@ -1,54 +1,34 @@
 document.addEventListener('DOMContentLoaded', function() {
-  lazyLoad(2000, 48)
+  setTimeout(lazyLoad.bind(this, 2, 2000, 48), 2000)
 
-  // Lazy loader (p -> p + 1)
-  // have img with src = (p)_hmn_aw19.jpg
-  // have index = p
-
-  // set index = (p + 1 % limit) + 1 <-- starts with 1
-  // get url (index)_hmn_aw19.jpg
-  // create image, append to src.
-  
-  // when loaded into img
-  //   prepare switch
-  //   fadeout fadein
-  
-  // remove old img.
-  // done
-
-  index = 2;
-  function lazyLoad(delay, limit) {
-
-    setInterval(function () {
-      index = index >= limit ? 1 : index + 1
-      var url = "./images/collections/aw/" + (index < 10 ? ("0" + index) : index) + "_hmn_aw19.jpg"
-      var oddImage = document.querySelector('.carousel__image--odd')
-      var evenImage = document.querySelector('.carousel__image--even')
-
-      if ((index & 1) == 0) {
-        evenImage.classList.remove('carousel__image--activate')
-        setTimeout(function() {
-          evenImage.src = url
-        }, 500)        
-      } else {
-        evenImage.classList.add('carousel__image--activate')
-        setTimeout(function() {
-          oddImage.src = url
-        }, 500)        
-      }
-    }, delay)
-
-  }
-
-  function loadImage() {
-      var carousel = document.getElementById("carousel")
-      
-      var img = new Image();
-      img.classList.add("carousel__image")
-      img.onload = function () {
-        carousel.appendChild(img);
-        carousel.removeChild(carousel.firstChild);
-      }
-      img.src = url
+  function lazyLoad(index, delay, limit) {
+    var imgSrc = "./images/collections/aw/" + (index < 10 ? ("0" + index) : index) + "_hmn_aw19.jpg"
+    var nextIndex = index = index >= limit ? 1 : index + 1
+    
+    var frontImage = document.getElementById('aw_front')
+    var backImage  = document.getElementById('aw_back')
+    
+    var changeSrcImage;
+    if (backImage.classList.contains('carousel__image--activate')) {
+      changeSrcImage = frontImage
+    } else {
+      changeSrcImage = backImage
     }
+    
+    changeSrcImage.src = imgSrc
+    changeSrcImage.onload = function() {
+      backImage.classList.toggle('carousel__image--activate')
+      changeSrcImage.onload = null;
+      changeSrcImage.onerror = null;
+      
+      setTimeout(lazyLoad.bind(this, nextIndex, delay, limit), delay)
+    }
+    
+    changeSrcImage.onerror = function() {
+      imgSrc = "./images/collections/aw/" + (nextIndex < 10 ? ("0" + nextIndex) : nextIndex) + "_hmn_aw19.jpg"
+      nextIndex = nextIndex = nextIndex >= limit ? 1 : nextIndex + 1
+      
+      changeSrcImage.src = imgSrc
+    }
+  }
 })

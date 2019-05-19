@@ -84,10 +84,10 @@ body {
   position: absolute;
 }
 
-.carousel__image--odd {
+.carousel__image--front {
 }
 
-.carousel__image--even {
+.carousel__image--back {
   transition: all 500ms ease;
   opacity: 0;
 }

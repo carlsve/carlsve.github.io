@@ -9,4 +9,18 @@
 
 time: 
 14.20 - 16.00 ~ 1h 40min
-16.10 - 
+16.10 - 16.30 ~ 20 min
+23.00 - 00.00 ~ 1h
+00.00 - 00.30 ~ 30 min
+
+total: 20/5: 3h 30min
+- index.html finished
+- page layout styling finished
+- lazy loading carousel
+
+todo:
+- page structure (dynamical load in of content)
+- contact page
+- about pages (about hyun, about designer)
+- collections page
+- collections pages
