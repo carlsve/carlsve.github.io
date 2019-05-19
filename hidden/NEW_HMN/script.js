@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(lazyLoad.bind(this, 2, 2000, 48), 2000)
+  setTimeout(lazyLoad.bind(this, 2, 5000, 48), 5000)
 
   function lazyLoad(index, delay, limit) {
     var imgSrc = "./images/collections/aw/" + (index < 10 ? ("0" + index) : index) + "_hmn_aw19.jpg"
@@ -17,10 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     changeSrcImage.src = imgSrc
     changeSrcImage.onload = function() {
-      backImage.classList.toggle('carousel__image--activate')
       changeSrcImage.onload = null;
       changeSrcImage.onerror = null;
-      
+
+      backImage.classList.toggle('carousel__image--activate')
       setTimeout(lazyLoad.bind(this, nextIndex, delay, limit), delay)
     }
     
