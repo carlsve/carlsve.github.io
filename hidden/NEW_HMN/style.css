@@ -79,6 +79,7 @@ body {
 }
 
 .carousel__image {
+  width: 100%;
   max-width: 344px;
   margin: 0 auto;
   position: absolute;
@@ -138,6 +139,7 @@ body {
   }
 
   .carousel__image {
+    width: 100%;
     max-width: 440px;
   }
 
