@@ -73,10 +73,27 @@ body {
 }
 
 .carousel {
-  background: red;
   height: 400px;
-  min-height: 442px;
   margin: 0 18px;
+  position: relative;
+}
+
+.carousel__image {
+  max-width: 344px;
+  margin: 0 auto;
+  position: absolute;
+}
+
+.carousel__image--odd {
+}
+
+.carousel__image--even {
+  transition: all 500ms ease;
+  opacity: 0;
+}
+
+.carousel__image--activate {
+  opacity: 1;
 }
 
 .links {
@@ -118,6 +135,10 @@ body {
   .carousel {
     margin: 0;
     height: 540px
+  }
+
+  .carousel__image {
+    max-width: 440px;
   }
 
   .links {
