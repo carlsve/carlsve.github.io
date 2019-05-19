@@ -1,0 +1,10 @@
+ 
+- Page structure
+- index.html page, general styling
+- Main page content (text, images, carousel)
+- Contact page
+- Collections
+- about
+- Polish, ensure text loads in well.
+
+time: 14.20 -
