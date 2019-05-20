@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+  <title>HYUN MI NIELSEN</title>
+</head>
+<body>
+
+  <header class="header">
+    <a class="header__title" href="index.html"></a>
+  </header>
+  
+  <main class="main">
+    <div class="collections">    
+      <a class="section__text">COLLECTION I LOOK BOOK 2017</a>
+      <a class="section__text">NOCTURNE BOOK</a>
+      <a class="section__text">COLLECTION II LOOK BOOK 2017</a>
+      <a class="section__text">SUMMER SOLSTICE BOOK</a>
+      <a class="section__text">COLLECTION III LOOK BOOK 2018</a>
+      <a class="section__text">MENSCH VIDEO</a>
+      <a class="section__text">LOOK BOOK S/S 2019</a>
+      <a class="section__text--no_margin">BIRD GURL</a>
+      <a class="section__text--no_margin">Paradise found – Paradise lost</a>
+      <a class="section__text">LOOK BOOK A/W 2019</a>
+    </div>
+
+    <div class="links">
+      <a class="link" href="index.html">Index</a>
+      <a class="link" href="about.html">About</a>
+      <a class="link" href="contact.html">Contact</a>
+    </div>
+  </main>
+
+  <script>
+    var hyun       = document.getElementById('about_hyun')
+    var designer   = document.getElementById('about_designer')
+    var toHyun     = document.getElementById('about_hyun_button')
+    var toDesigner = document.getElementById('about_designer_button')
+
+    toHyun.onclick = function() {
+      designer.classList.add('hidden')
+      hyun.classList.remove('hidden')
+    }
+    
+    toDesigner.onclick = function() {
+      hyun.classList.add('hidden')
+      designer.classList.remove('hidden')
+    }
+  </script>
+</body>
+</html>

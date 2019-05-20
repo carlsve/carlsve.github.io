@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+  <title>ABOUT HYUN MI NIELSEN</title>
+</head>
+<body>
+
+  <header class="header">
+    <a class="header__title" href="index.html"></a>
+  </header>
+  
+  <main class="main">
+    <div class="about" id="about_hyun">
+      <p class="section__text--no_margin">HYUN MI NIELSEN presents her collections on</p>
+      <p class="section__text--no_margin">the official Pret a Porter calendar in Paris.</p>
+      <p class="section__text--no_margin">HYUN MI NIELSEN was a guest member on</p>
+      <p class="section__text--no_margin">the official Haute Couture calendar where she</p>
+      <p class="section__text--full_margin">presented her first collection Nocturne S/S 2017.</p>
+      
+      <a class="section__text" id="about_designer_button">ABOUT THE DESIGNER</a>
+    </div>
+
+    <div class="about hidden" id="about_designer">
+      <p class="section__text--no_margin">Christine Hyun Mi Nielsen</p>
+      <p class="section__text">is the founder and Creative Director of Hyun Mi Nielsen.</p>
+      <p class="section__text--no_margin">She is Danish, born in South Korea.</p>
+      <p class="section__text--no_margin">Educated in Copenhagen and London where she</p>
+      <p class="section__text--no_margin">studied at the Royal College of Art and Design.</p>
+      <p class="section__text">She lives and works in Paris.</p>
+      <p class="section__text--no_margin">Before founding Hyun Mi Nielsen in July 2016,</p>
+      <p class="section__text--full_margin">She has worked as Directrice de Studio PAP Femme at Balenciaga and Givenchy in Paris and Head of Womenswear Design at Alexander McQueen in London.</p>
+      
+      <a class="section__text" id="about_hyun_button">ABOUT HYUN MI NIELSEN</a>
+    </div>
+    
+    <div class="links">
+      <a class="link" href="collections.html">Collections</a>
+      <a class="link" href="index.html">Index</a>
+      <a class="link" href="contact.html">Contact</a>
+    </div>
+  </main>
+
+  <script>
+    var hyun       = document.getElementById('about_hyun')
+    var designer   = document.getElementById('about_designer')
+    var toHyun     = document.getElementById('about_hyun_button')
+    var toDesigner = document.getElementById('about_designer_button')
+
+    toHyun.onclick = function() {
+      designer.classList.add('hidden')
+      hyun.classList.remove('hidden')
+      document.title = "ABOUT HYUN MI NIELSEN"
+    }
+    
+    toDesigner.onclick = function() {
+      hyun.classList.add('hidden')
+      designer.classList.remove('hidden')
+      document.title = "ABOUT THE DESIGNER"
+    }
+  </script>
+</body>
+</html>

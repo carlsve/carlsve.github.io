@@ -27,3 +27,5 @@ todo:
 
 
 00.05 - 01.20 ~ 1h 15min
+06.50 - 07.15 ~ 25min <- contact page done
+07.20 - 07.45 ~ 25min <- about page done

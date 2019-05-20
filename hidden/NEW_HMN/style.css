@@ -21,16 +21,21 @@ max-width: 960px
 html,
 body,
 header,
+p,
 main {
   margin: 0;
   padding: 0;
 }
 
-a {
+a,
+a:visited {
   text-decoration: none;
+  color: #000000;
 }
 
-a:hover {
+a:hover,
+a:active {
+  cursor: pointer;
   text-decoration: underline;
 }
 
@@ -38,6 +43,10 @@ html,
 body {
   height: 100%;
   width: 100%;
+
+  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+  color: #000000;
+  font-size: 11px;
 
   background-color: #fdffef;
 }
@@ -108,18 +117,54 @@ body {
 
 .link {
   display: inline-block;
-  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-  letter-spacing: 1px;
-  color: #000000;
-  font-size: 11px;
   text-transform: uppercase;
   text-align: center;
+  letter-spacing: 1px;
   min-width: 29%;
 }
 
+.contact {
+  text-align: center;
+  padding-top: 36px;
+  
+}
+
+.section__text--full_margin,
+.section__text--no_margin,
+.section__text {
+  display: block;
+  line-height: 15px;
+  margin-bottom: 15px;
+}
+
+.section__text--full_margin {
+  margin-bottom: 30px;
+}
+
+.section__text--no_margin {
+  margin-bottom: 0px;
+}
+
+.collections,
+.about {
+  text-align: center;
+  padding-top: 14px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.hidden {
+  display: none;
+}
+
+
 /* Desktop styling below */
 @media screen and (min-width: 420px) {
-  
+  html,
+  body {
+    font-size: 10px;
+  }
+
   .header {
     text-align: center;
     height: 86px;
