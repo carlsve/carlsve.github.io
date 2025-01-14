@@ -35,7 +35,7 @@ button {
 
 .listelem {
     display: flex;
-    border-bottom: 1px solid #e2e7ed;
+    border-bottom: 2px solid #e2e7ed;
     padding: 15px;
 }
 
@@ -71,12 +71,12 @@ button {
 /* MAIN STYLING */
 
 .main {
-    background-color: #2e3f4b;
+    background-color: #ffffff;
+    color: #2e3f4b;
     margin-left: 300px;
 }
 
 .header {
-    background-color: #2e3f4b;
     box-sizing: border-box;
     width: 100%;
     height: 300px;
@@ -120,9 +120,9 @@ button {
     display: block;
     position: relative;
     
-    background: #2e3f4b;
-    border: 2px solid #e2e7ed;
-    color: #e2e7ed;
+    background: #ffffff;
+    border: 2px solid #2e3f4b;
+    color: #2e3f4b;
     border-radius: 8px;
     height: 32px;
     width: 120px;
@@ -161,12 +161,12 @@ button {
 
 /* Style the scrollbar handle (the draggable part) */
 ::-webkit-scrollbar-thumb {
-    background-color: #ffffff; /* color of the thumb */
+    background-color: #e2e7ed; /* color of the thumb */
 }
 
 /* Hover state for the scrollbar handle */
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #ffffff; /* color of the thumb when hovering */
+    background-color: #e2e7ed; /* color of the thumb when hovering */
 }
 
 /* Style the scrollbar track (the part the thumb slides along) */
@@ -176,5 +176,5 @@ button {
 
 /* Optional: Style the scrollbar corner (where horizontal and vertical scrollbars meet) */
 ::-webkit-scrollbar-corner {
-    background-color: #f1f1f1;
+    background-color: #e2e7ed;
 }
