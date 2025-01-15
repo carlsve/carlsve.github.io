@@ -1,3 +1,5 @@
+/* ##### MOBILE FIRST ##### */
+
 /* CSS RESET */
 
 * {
@@ -18,6 +20,21 @@ body {
 
 button {
     display: block;
+    background: #ffffff;
+    border: 2px solid #2e3f4b;
+    color: #2e3f4b;
+    border-radius: 8px;
+    height: 32px;
+    width: 100%;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    display: block;
+    position: relative;
+    color: white;
+    background-color: #2e3f4b;
 }
 
 /* HEADER */
@@ -35,11 +52,12 @@ button {
 /* SIDEBAR STYLING */
 
 .sidebar {
-    color: #e2e7ed;
-    min-width: 300px;
+    display: none;
     height: 100%;
+    color: #e2e7ed;
     background-color: #2e3f4b;
     overflow-y: auto;
+
 }
 
 .listelem {
@@ -84,17 +102,16 @@ button {
     color: #2e3f4b;
     width: 100%;
     overflow-y: auto;
+    padding: 15px;
 }
 
 .person {
     box-sizing: border-box;
     width: 100%;
-    height: 300px;
-    padding: 20px;
     display: flex;
     align-items: center;
     justify-content: space-around;
-    flex-direction: row;
+    flex-direction: column;
 }
 .person__image {
     width: 250px;
@@ -105,6 +122,7 @@ button {
     background-size: cover;
 }
 .person__details {
+    width: 100%;
 }
 .person__name {
 
@@ -122,28 +140,7 @@ button {
 .person__prints h3 {
     margin-bottom: 8px;
 }
-.person__prints button {
-    display: block;
-    position: relative;
-    
-    background: #ffffff;
-    border: 2px solid #2e3f4b;
-    color: #2e3f4b;
-    border-radius: 8px;
-    height: 32px;
-    width: 120px;
-    margin-bottom: 16px;
-    cursor: pointer;
-}
-.person__prints button:hover {
-    display: block;
-    position: relative;
-    color: white;
-    background-color: #2e3f4b;
-}
-.content {
-    padding: 40px 100px;
-}
+
 .content__introduction {
 }
 .content__experience {}
@@ -183,4 +180,31 @@ button {
 /* Optional: Style the scrollbar corner (where horizontal and vertical scrollbars meet) */
 ::-webkit-scrollbar-corner {
     background-color: #e2e7ed;
+}
+
+
+
+/* ##### DESKTOP STYLING ##### */
+@media screen and (min-width: 1280px) {
+    button {
+        width: 120px;
+    }
+
+    .sidebar {
+        display: block;
+        min-width: 300px;
+    }
+
+    .main {
+        padding: 0 100px;
+    }
+
+    .person {
+        padding: 20px;
+        flex-direction: row;
+    }
+
+    .person__details {
+        max-width: 300px;
+    }
 }
