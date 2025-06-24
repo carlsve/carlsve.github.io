@@ -23,7 +23,7 @@
                     <legend>Cooks: <span id="widget__restaurant__cooks">1</span></legend>
                     <button id="widget__restaurant__hirecook">Hire Cook</button>
                     <p>Cost: <span id="widget__restaurant__cookcost">100</span>$</p>
-                    <ul>
+                    <ul id="widget__restaurant__cooklist">
                         <li>
                             <button id="widget__restaurant__startcook">Cook</button>
                             <progress id="widget__restaurant__cookprogress" value="0" max="100"></progress>
@@ -36,10 +36,11 @@
             <legend>Dining Area</legend>
             <div>
                 <p>Food: <span id="widget__restaurant__food">0</span></p>
+                <p>Price: <span id="widget__restaurant__foodprice">0</span>$</p>
                 <p>Customers: <span id="widget__restaurant__customers">0</span></p>
-                <button>Hire Server</button>
+                <button id="widget__restaurant__hireserver">Hire Server</button>
                 <p>Cost: <span id="widget__restaurant__servercost">100</span>$</p>
-                <ul>
+                <ul id="widget__restaurant__serverlist">
                     <li>
                         <button id="widget__restaurant__serve">Serve</button>
                         <progress id="widget__restaurant__serveprogress" value="0" max="100"></progress>
@@ -47,7 +48,7 @@
                 </ul>
             </div>
         </fieldset>
-        <fieldset>
+        <fieldset id="widget__restaurant__upgrades">
             <legend>Upgrades</legend>
         </fieldset>
     </div>
