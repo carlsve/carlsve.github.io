@@ -3,7 +3,7 @@ class Property extends HTMLElement {
         super()
 
         this.state = {
-            money: 5000
+            money: 100
         }
         window.property = this.state
 
