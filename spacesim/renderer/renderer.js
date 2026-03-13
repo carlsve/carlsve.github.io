@@ -39,11 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
             y: y/z,
         }
     }
-    
+
     function translate_z({x, y, z}, dz) {
         return {x, y, z: z + dz}
     }
-    
+
     function rotate_xz({x, y, z}, angle) {
         const s = Math.sin(angle)
         const c = Math.cos(angle)
@@ -53,13 +53,34 @@ document.addEventListener('DOMContentLoaded', () => {
             z: x*s + z*c,
         }
     }
-    
+
+    const keys = {}
+    const camera = {
+        x: 0,
+        y: 0,
+        z: 0,
+        yaw: 0,
+    }
+
+    function cameraTransform(v) {
+        let x = v.x - camera.x
+        let y = v.y - camera.y
+        let z = v.z - camera.z
+
+        let c = Math.cos(camera.yaw)
+        let s = Math.sin(camera.yaw)
+
+        let dx = x*c - z*s
+        let dz = x*s + z*c
+
+        return { x: dx, y: y, z: dz }
+    }
     const vs = [
         {x: -0.25, y:  0.25, z:  0.25},
         {x:  0.25, y:  0.25, z:  0.25},
         {x:  0.25, y: -0.25, z:  0.25},
         {x: -0.25, y: -0.25, z:  0.25},
-        
+
         {x: -0.25, y:  0.25, z: -0.25},
         {x:  0.25, y:  0.25, z: -0.25},
         {x:  0.25, y: -0.25, z: -0.25},
@@ -81,8 +102,27 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function frame() {
         const dt = 1/FPS
+        if (keys["w"]) {
+            camera.x += Math.sin(camera.yaw) * dt
+            camera.z += Math.cos(camera.yaw) * dt
+        }
+        if (keys["s"]) {
+            camera.x -= Math.sin(camera.yaw) * dt
+            camera.z -= Math.cos(camera.yaw) * dt
+        }
+        if (keys["a"]) {
+            camera.x -= Math.cos(camera.yaw) * dt
+            camera.z += Math.sin(camera.yaw) * dt
+        }
+        if (keys["d"]) {
+            camera.x += Math.cos(camera.yaw) * dt;
+            camera.z -= Math.sin(camera.yaw) * dt;
+        }
+        if (keys["ArrowLeft"])  camera.yaw -= Math.PI*2*dt
+        if (keys["ArrowRight"]) camera.yaw += Math.PI*2*dt
+
         angle += Math.PI*dt
-        dz += 1*dt*Math.sin(angle)
+        // dz += 1*dt*Math.sin(angle)
         clear()
         // for (const v of vs) {
         //     point(screen(project(translate_z(rotate_xz(v, angle), dz))))
@@ -92,8 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const a = vs[f[i]]
                 const b = vs[f[(i+1)%f.length]]
                 line(
-                    screen(project(translate_z(rotate_xz(a, angle), dz))),
-                    screen(project(translate_z(rotate_xz(b, angle), dz))),
+                    screen(project(cameraTransform(translate_z(rotate_xz(a, angle), dz)))),
+                    screen(project(cameraTransform(translate_z(rotate_xz(b, angle), dz)))),
                 )
 
             }
@@ -101,6 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.setTimeout(frame, 1000/FPS)
     }
+
+    window.addEventListener("keydown", (e) => {
+        keys[e.key] = true
+    })
+
+    window.addEventListener("keyup", (e) => {
+        keys[e.key] = false
+    })
 
     window.setTimeout(frame, 1000/FPS)
 })
