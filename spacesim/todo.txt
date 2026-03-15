@@ -1,11 +1,7 @@
 file structure:
 - renderer
   - mesh ordering (distance to point of origin ordering)
-- loop
-  - request animation frame, proper dt handling to deal with lag
-  - dt multiply rotations
 - designer
-    - draw screen
     - add points (button add point, plus sign listener)
     - add triangles (textarea)
     - rotate mesh
