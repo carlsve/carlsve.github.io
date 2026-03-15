@@ -1,0 +1,49 @@
+Definitives:
+- ghost
+    - switch follow / controls
+    - render ghost
+- tiles that are less of a brutal eye sore
+- stats
+    * hp
+    * dmg
+- enemies
+    * primitive ai
+        > random walk
+        > line of sight aggression
+    * hp
+- minimap
+- combat
+- start menu
+- vec2d-ify canvas
+- general cleanup
+- adapt A* algorithm to our needs
+    * rewrite into vec2d code
+    * look into possibility of simplifications
+
+
+Experimentables:
+- Other types of dungeon generation methods
+
+
+Discussables:
+- viewport can venture outside of the board?
+    * canvas.at(out of bounds cords) -> obstructive terrain?
+- player.perform. We may need to re write this to deal with interruptions of action-chains
+- timers when calling world.tick.
+    * This should probably definitely not be called in player.
+
+
+Futures/Features:
+- stats
+- enemy ai
+- items
+- floors
+- leveling system
+- skills
+- fog of war
+
+
+Problems:
+- viewport logic in render
+    * depends heavily on tile size, which is located in canvas, this sucks
+    * mouseInput: its good kinda, but depends heavily on game object and camera.

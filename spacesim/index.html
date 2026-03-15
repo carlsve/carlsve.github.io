@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Space sim</title>
 </head>
 <body>
     <canvas id="spacesim"></canvas>
-    <div><p>fly with wasd, turn with arrows</p></div>
-    <script src="renderer/renderer.js"></script>
+    <fieldset>
+        <legend>controls</legend>
+        <p>WASD: move ship x-y pos</p>
+        <p>ZX: move ship y pos</p>
+        <p>Arrow Keys: rotate heading of ship</p>
+        <p>EQ: rotate roll of ship</p>
+        <p>r - reset rotations, t - reset positions</p>
+    </fieldset>
+    <script type="module" src="src/renderer/renderer.js"></script>
 </body>
 </html>
