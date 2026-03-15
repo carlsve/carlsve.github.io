@@ -103,6 +103,9 @@ export function initRender(game, camera, meshes) {
 
     function renderFrame(entities) {    
         clear()
+
+        entities.sort((a, b) => cameraTransform(b.p).z - cameraTransform(a.p).z)
+
         for (const {p, type} of entities) {
             const {vs, fs} = meshes[type]
 

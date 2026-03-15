@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const meshes = {
         cube: rewireMesh(cube)
     }
-    const entities = [{ p: {x:0,y:0,z:1}, type: 'cube' }]
+    const entities = [
+        { p: {x:0,y:0,z:1}, type: 'cube' },
+        { p: {x:0,y:0,z:2}, type: 'cube' },
+    ]
 
     window.designer = {
         render: {
