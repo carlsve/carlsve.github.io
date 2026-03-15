@@ -1,6 +1,4 @@
 file structure:
-- renderer
-  - mesh ordering (distance to point of origin ordering)
 - designer
     - add points (button add point, plus sign listener)
     - add triangles (textarea)

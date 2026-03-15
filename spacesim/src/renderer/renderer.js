@@ -10,10 +10,16 @@ export function initRender(game, camera, meshes) {
         ctx.fillRect(0,0,game.width,game.height)
     }
     
-    function point({x, y}) {
+    function point({x, y}, i) {
         const s = 20
         ctx.fillStyle = FOREGROUND
         ctx.fillRect(x - s/2, y - s/2, s, s)
+
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
+        ctx.font = "14px monospace"
+        ctx.fillStyle = BACKGROUND
+        ctx.fillText(i.toString(), x, y)
     }
     
     function triangle(p1, p2, p3, col) {
@@ -24,6 +30,17 @@ export function initRender(game, camera, meshes) {
         ctx.lineTo(p3.x, p3.y)
         ctx.closePath()
         ctx.fill()
+    }
+
+    function wireframe(p1, p2, p3) {
+        ctx.lineWidth = 3
+        ctx.strokeStyle = FOREGROUND
+        ctx.beginPath()
+        ctx.moveTo(p1.x, p1.y)
+        ctx.lineTo(p2.x, p2.y)
+        ctx.lineTo(p3.x, p3.y)
+        ctx.closePath()
+        ctx.stroke()
     }
     
     function screen(p) {
@@ -111,32 +128,44 @@ export function initRender(game, camera, meshes) {
 
             let tvs = vs.map(v => cameraTransform(M3(v).add(p).val()))
 
-            if (window.designer.render.drawTriangles) {
-                for (const t of fs) {
-                    const t1 = tvs[t[0]]
-                    const t2 = tvs[t[1]]
-                    const t3 = tvs[t[2]]
-            
-                    if (backface(t1, t2, t3)) continue
-            
-                    const clipped = clipTriangleNear(t1, t2, t3, 0.1)
-                    if (!clipped) continue
-                    for (const [c1, c2, c3] of clipped) {
-                        triangle(
-                            screen(project(c1)),
-                            screen(project(c2)),
-                            screen(project(c3)),
-                            t[3]
-                        )
-                    }
+            const tris = []
+            for (const t of fs) {
+                const t1 = tvs[t[0]]
+                const t2 = tvs[t[1]]
+                const t3 = tvs[t[2]]
+
+                if (backface(t1, t2, t3)) continue
+
+                const clipped = clipTriangleNear(t1, t2, t3, 0.1)
+                if (!clipped) continue
+                for (const [c1, c2, c3] of clipped) {
+                    const depth = (c1.z + c2.z + c3.z) / 3
+                    tris.push({
+                        p1: screen(project(c1)),
+                        p2: screen(project(c2)),
+                        p3: screen(project(c3)),
+                        col: t[3],
+                        depth
+                    })
                 }
             }
-            
-            if (window.designer.render.drawPoints) {
-                for (const c of tvs) {
+
+            tris.sort((a, b) => b.depth - a.depth)
+            for (const t of tris) {                
+                if (window.designer.settings.renderTriangles) {
+                    triangle(t.p1, t.p2, t.p3, t.col)
+                }
+                if (window.designer.settings.renderWireframe) {
+                    wireframe(t.p1, t.p2, t.p3, t.col)
+                }
+
+            }
+
+            if (window.designer.settings.renderPoints) {
+                for (let i = 0; i < tvs.length; ++i) {
+                    const c = tvs[i]
                     if (c.z <= 0) continue
-                    
-                    point(screen(project(c)))
+                    point(screen(project(c)), i)
                 }
             }
         }
