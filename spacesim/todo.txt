@@ -1,16 +1,19 @@
-file structure:
-- designer
-    - add points (button add point, plus sign listener)
-    - add triangles (textarea)
-    - rotate mesh
-    - save (localstorage)
-    - print console.log
-
 meshes:
-- spaceship
 - space station
 
-space:
-- planets
-- points of interest
-- sectors
+engine:
+- particles (explosions, thrusters) (particle-emitters?)
+- render stars
+- render planets (solids)
+
+game:
+  controls:
+  - fun spaceship controls
+  graphics:
+  - ui
+  weapons:
+  - lasers
+  space:
+  - planets
+  - points of interest
+  - sectors
