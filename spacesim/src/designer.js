@@ -1,5 +1,6 @@
 import { initRender } from './renderer/renderer.js'
 import { cube } from './meshes/cube.js'
+import { ship } from './meshes/ship.js'
 import { rewireMesh } from './utils/rewireMesh.js'
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -10,30 +11,48 @@ document.addEventListener('DOMContentLoaded', function() {
         z: 0,
         yaw: 0,
         pitch: 0,
-        roll: 0    
+        roll: 0
     }
     const meshes = {
-        cube: rewireMesh(cube)
+        cube: rewireMesh(cube),
+        ship: ship
     }
     const entities = [
-        { p: {x:0,y:0,z:1}, type: 'cube' },
-        { p: {x:0,y:0,z:2}, type: 'cube' },
+        { p: {x:2,y:0,z:1}, type: 'cube' },
+        { p: {x:-2,y:0,z:2}, type: 'cube' },
+        { p: {x:0,y:0,z:1}, type: 'ship' },
     ]
 
+    const ui = {
+        renderPoints: document.querySelector('#renderPoints'),
+        renderTriangles: document.querySelector('#renderTriangles'),
+        renderWireframe: document.querySelector('#renderWireframe'),
+        game: document.querySelector('#spacesim'),
+    }
+
     window.designer = {
-        render: {
-            drawPoints: true,
-            drawTriangles: true
+        ui,
+        settings: {
+            renderPoints: ui.renderPoints.checked,
+            renderTriangles: ui.renderTriangles.checked,
+            renderWireframe: ui.renderWireframe.checked,
         },
         camera,
         keys,
         meshes,
         entities,
     }
-
-    const game = document.querySelector('#spacesim')
-    game.width = 640
-    game.height = 480
+    ui.renderPoints.addEventListener('click', function() {
+        window.designer.settings.renderPoints = ui.renderPoints.checked
+    })
+    ui.renderTriangles.addEventListener('click', function() {
+        window.designer.settings.renderTriangles = ui.renderTriangles.checked
+    })
+    ui.renderWireframe.addEventListener('click', function() {
+        window.designer.settings.renderWireframe = ui.renderWireframe.checked
+    })
+    ui.game.width = 640
+    ui.game.height = 480
 
     window.addEventListener("keydown", (e) => {
         keys[e.key] = true
@@ -43,13 +62,13 @@ document.addEventListener('DOMContentLoaded', function() {
         keys[e.key] = false
     })
 
-    const { renderFrame } = initRender(game, camera, meshes)
+    const { renderFrame } = initRender(ui.game, camera, meshes)
     let lastTime = performance.now()
     
     function loop(currentTime) {
         const dt = (currentTime - lastTime) / 1000
         lastTime = currentTime    
-    
+
         if (keys["w"]) {
             camera.x += Math.sin(camera.yaw) * dt
             camera.z += Math.cos(camera.yaw) * dt
@@ -67,10 +86,10 @@ document.addEventListener('DOMContentLoaded', function() {
             camera.z -= Math.sin(camera.yaw) * dt
         }
         if (keys["e"]) {
-            camera.roll -= Math.PI*dt/2
+            camera.roll += Math.PI*dt/2
         }
         if (keys["q"]) {
-            camera.roll += Math.PI*dt/2
+            camera.roll -= Math.PI*dt/2
         }
         if (keys["z"]) {
             camera.y -= dt
