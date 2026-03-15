@@ -1,5 +1,6 @@
-import { initRender, initMeshes } from './renderer/renderer.js'
+import { initRender } from './renderer/renderer.js'
 import { cube } from './meshes/cube.js'
+import { rewireMesh } from './utils/rewireMesh.js'
 
 document.addEventListener('DOMContentLoaded', function() {
     const keys = {}
@@ -11,8 +12,11 @@ document.addEventListener('DOMContentLoaded', function() {
         pitch: 0,
         roll: 0    
     }
-    const meshes = initMeshes([cube])
-    
+    const meshes = {
+        cube: rewireMesh(cube)
+    }
+    const entities = [{ p: {x:0,y:0,z:1}, type: 'cube' }]
+
     window.designer = {
         render: {
             drawPoints: true,
@@ -21,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         camera,
         keys,
         meshes,
+        entities,
     }
 
     const game = document.querySelector('#spacesim')
@@ -81,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
             camera.x = camera.y = camera.z = 0
         }
 
-        renderFrame()
+        renderFrame(entities)
 
         requestAnimationFrame(loop)
     }

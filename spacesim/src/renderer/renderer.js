@@ -1,27 +1,5 @@
 import { M3 } from "../math/matrix.js"
 
-function randCol() { 
-    return "#" + ((1 << 24) * Math.random() | 0).toString(16).padStart(6, "0")
-}
-
-export function initMeshes(meshes) {
-    return meshes.map(({vs, fs}) => {
-        const wiredfs = fs.map(([ai,bi,ci]) => {
-            const a = vs[ai]
-            const b = vs[bi]
-            const c = vs[ci]
-            const ab = M3(b).sub(a).val()
-            const ac = M3(c).sub(a).val()
-        
-            if (M3(ab).cross(ac).dot(a) < 0) {
-                return [ai,ci,bi, randCol()] // flip
-            }
-            return [ai,bi,ci, randCol()]
-        })
-        return {vs, fs: wiredfs}
-    })
-}
-
 export function initRender(game, camera, meshes) {
     const BACKGROUND = '#000000'
     const FOREGROUND = '#00FF00'
@@ -30,13 +8,6 @@ export function initRender(game, camera, meshes) {
     function clear() {
         ctx.fillStyle = BACKGROUND
         ctx.fillRect(0,0,game.width,game.height)
-    }
-
-    function backface(a,b,c) {
-        const ab = M3(b).sub(a).val()
-        const ac = M3(c).sub(a).val()
-    
-        return M3(ab).cross(ac).dot(a) > 0
     }
     
     function point({x, y}) {
@@ -58,7 +29,7 @@ export function initRender(game, camera, meshes) {
     function screen(p) {
         return {
             x: (p.x / ASPECT + 1)/2*game.width,
-            y: (1 -(p.y + 1)/2)*game.height,
+            y: (1 - (p.y + 1)/2)*game.height,
         }
     }
     
@@ -79,7 +50,7 @@ export function initRender(game, camera, meshes) {
         }
     }
     
-    function clipTriangleNear(a, b, c, NEAR = 0.1) {
+    function clipTriangleNear(a, b, c, NEAR) {
         const inside = [a, b, c].filter(v => v.z > NEAR)
         const outside = [a, b, c].filter(v => v.z <= NEAR)
     
@@ -115,63 +86,55 @@ export function initRender(game, camera, meshes) {
     }
 
     function cameraTransform(v) {
-        let x = v.x - camera.x
-        let y = v.y - camera.y
-        let z = v.z - camera.z
-    
-        let yc = Math.cos(camera.yaw)
-        let ys = Math.sin(camera.yaw)
-    
-        let x1 = x*yc - z*ys
-        let y1 = y
-        let z1 = x*ys + z*yc
-    
-        let pc = Math.cos(camera.pitch)
-        let ps = Math.sin(camera.pitch)
-    
-        let x2 = x1
-        let y2 = y1*pc - z1*ps
-        let z2 = y1*ps + z1*pc
-    
-        let rc = Math.cos(camera.roll)
-        let rs = Math.sin(camera.roll)
-    
-        let x3 = x2*rc - y2*rs
-        let y3 = x2*rs + y2*rc
-        let z3 = z2
-    
-        return { x: x3, y: y3, z: z3 }
+        return M3(v)
+            .sub(camera)
+            .rot_xz(camera.yaw)
+            .rot_yz(camera.pitch)
+            .rot_xy(camera.roll)
+            .val()
     }
 
-    function renderFrame() {    
-        clear()
-        for (const {vs, fs} of meshes) {
-            let tvs = vs.map(v => cameraTransform(v))
+    function backface(a,b,c) {
+        const ab = M3(b).sub(a).val()
+        const ac = M3(c).sub(a).val()
+    
+        return M3(ab).cross(ac).dot(a) > 0
+    }
 
-            for (const t of fs) {
-                const t1 = tvs[t[0]]
-                const t2 = tvs[t[1]]
-                const t3 = tvs[t[2]]
-        
-                if (backface(t1, t2, t3)) continue
-        
-                const clipped = clipTriangleNear(t1, t2, t3, 0.1)
-                if (!clipped) continue
-                for (const [c1, c2, c3] of clipped) {
-                    triangle(
-                        screen(project(c1)),
-                        screen(project(c2)),
-                        screen(project(c3)),
-                        t[3]
-                    )
+    function renderFrame(entities) {    
+        clear()
+        for (const {p, type} of entities) {
+            const {vs, fs} = meshes[type]
+
+            let tvs = vs.map(v => cameraTransform(M3(v).add(p).val()))
+
+            if (window.designer.render.drawTriangles) {
+                for (const t of fs) {
+                    const t1 = tvs[t[0]]
+                    const t2 = tvs[t[1]]
+                    const t3 = tvs[t[2]]
+            
+                    if (backface(t1, t2, t3)) continue
+            
+                    const clipped = clipTriangleNear(t1, t2, t3, 0.1)
+                    if (!clipped) continue
+                    for (const [c1, c2, c3] of clipped) {
+                        triangle(
+                            screen(project(c1)),
+                            screen(project(c2)),
+                            screen(project(c3)),
+                            t[3]
+                        )
+                    }
                 }
             }
             
-            for (const v of vs) {
-                const c = cameraTransform(v)
-                if (c.z <= 0) continue
-
-                point(screen(project(c)))
+            if (window.designer.render.drawPoints) {
+                for (const c of tvs) {
+                    if (c.z <= 0) continue
+                    
+                    point(screen(project(c)))
+                }
             }
         }
 

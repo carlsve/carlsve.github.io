@@ -1,3 +1,5 @@
+import { randCol } from "../utils/colors.js"
+
 const vs = [
     {x: -0.25, y:  0.25, z:  0.25},
     {x:  0.25, y:  0.25, z:  0.25},
@@ -23,6 +25,6 @@ const fs = [
     [1, 5, 2],
     [2, 6, 3],
     [3, 6, 7],
-]
+].map(fs => [...fs, randCol()])
 
 export const cube = { vs, fs }
