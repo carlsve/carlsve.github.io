@@ -1,9 +1,13 @@
 meshes:
 - space station
+- spaceship (split nose)
+- spaceship (bulky slow fighter)
+- spaceship (medium cargo ship)
+- spaceship (big cargo ship)
 
 engine:
 - particles (explosions, thrusters) (particle-emitters?)
-- render stars
+- render stars (solids)
 - render planets (solids)
 
 game:
@@ -11,8 +15,11 @@ game:
   - fun spaceship controls
   graphics:
   - ui
+  - space station interface (quests, trading)
   weapons:
   - lasers
+  enemies:
+  - pirate
   space:
   - planets
   - points of interest

@@ -121,8 +121,10 @@ export function initRender(game, camera, meshes) {
     function renderFrame(entities) {    
         clear()
 
-        entities.sort((a, b) => cameraTransform(b.p).z - cameraTransform(a.p).z)
-
+        entities.forEach(e => {
+            e.depth = cameraTransform(e.p).z
+        })
+        entities.sort((a, b) => b.depth - a.depth)
         for (const {p, type} of entities) {
             const {vs, fs} = meshes[type]
 

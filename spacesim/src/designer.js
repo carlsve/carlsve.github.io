@@ -1,6 +1,7 @@
 import { initRender } from './renderer/renderer.js'
 import { cube } from './meshes/cube.js'
 import { ship } from './meshes/ship.js'
+import { station } from './meshes/station.js'
 import { rewireMesh } from './utils/rewireMesh.js'
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -15,12 +16,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     const meshes = {
         cube: rewireMesh(cube),
-        ship: ship
+        ship,
+        station,
     }
     const entities = [
         { p: {x:2,y:0,z:1}, type: 'cube' },
         { p: {x:-2,y:0,z:2}, type: 'cube' },
-        { p: {x:0,y:0,z:1}, type: 'ship' },
+        { p: {x:0,y:0,z:3}, type: 'ship' },
+        { p: {x:0,y:0,z:1}, type: 'station' },
     ]
 
     const ui = {
