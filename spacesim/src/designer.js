@@ -92,6 +92,21 @@ document.addEventListener('DOMContentLoaded', function() {
         ui.cameraPos = makeDiv('camera_pos', 28)
     }
     
+    // Laser cooldown bar
+    if (!ui.laserCooldownContainer) {
+        ui.laserCooldownContainer = makeDiv('laser-cooldown-container', 330, 10);
+        ui.laserCooldownContainer.style.width = '200px';
+        ui.laserCooldownContainer.style.height = '20px';
+        ui.laserCooldownContainer.style.border = '1px solid red';
+        ui.laserCooldownContainer.style.padding = '2px';
+
+        ui.laserCooldownBar = document.createElement('div');
+        ui.laserCooldownBar.style.height = '100%';
+        ui.laserCooldownBar.style.width = '100%';
+        ui.laserCooldownBar.style.backgroundColor = 'red';
+        ui.laserCooldownContainer.appendChild(ui.laserCooldownBar);
+    }
+
     // 1. Create the container (the outline)
     if (!ui.speedContainer) {
         ui.speedContainer = makeDiv('speed-container', 300, 10); // Placed below FPS
@@ -140,10 +155,49 @@ document.addEventListener('DOMContentLoaded', function() {
         keys[e.key] = false
     })
 
+    const lasers = []
+    window.designer.lasers = lasers
+    const LASER_COOLDOWN = 1.0;
+    let laserCooldown = 0;
     const { renderFrame } = initRender(ui.game, camera, meshes)
     let lastTime = performance.now()
     let frameCount = 0;
 
+
+    function fireLaser(camera) {
+        const dir = {
+            x: Math.sin(camera.yaw) * Math.cos(camera.pitch),
+            y: Math.sin(camera.pitch),
+            z: Math.cos(camera.yaw) * Math.cos(camera.pitch)
+        };
+
+        // Right vector perpendicular to the forward direction (in the yaw plane)
+        const right = {
+            x: Math.cos(camera.yaw),
+            y: 0,
+            z: -Math.sin(camera.yaw)
+        };
+
+        const GUN_OFFSET = 0.3;
+        const GUN_DROP = 0.2;
+
+        const p1 = {
+            x: camera.x - right.x * GUN_OFFSET,
+            y: camera.y - GUN_DROP,
+            z: camera.z - right.z * GUN_OFFSET,
+        }
+        const p2 = {
+            x: camera.x + right.x * GUN_OFFSET,
+            y: camera.y - GUN_DROP,
+            z: camera.z + right.z * GUN_OFFSET,
+        }
+
+        // Left lower gun
+        lasers.push({ p: p1, v: dir, speed: 200, life: 1.0 });
+        lasers.push({ p: p2, v: dir, speed: 200, life: 1.0 });
+
+        console.log(lasers)
+    }
 
     function loop(currentTime) {
         
@@ -170,7 +224,13 @@ document.addEventListener('DOMContentLoaded', function() {
         camera.x += Math.sin(camera.yaw) * camera.forwardThrust - Math.sin(camera.yaw) * camera.backwardThrust - Math.cos(camera.yaw) * camera.leftThrust + Math.cos(camera.yaw) * camera.rightThrust
         camera.y += Math.sin(camera.pitch) * camera.forwardThrust - Math.sin(camera.pitch) * camera.backwardThrust
         camera.z += Math.cos(camera.yaw) * camera.forwardThrust - Math.cos(camera.yaw) * camera.backwardThrust + Math.sin(camera.yaw) * camera.leftThrust - Math.sin(camera.yaw) * camera.rightThrust
-
+        laserCooldown = Math.max(0, laserCooldown - dt);
+        if (keys[" "] && laserCooldown === 0) {
+            fireLaser(camera);
+            laserCooldown = LASER_COOLDOWN;
+        }
+        ui.laserCooldownBar.style.width = ((1 - laserCooldown / LASER_COOLDOWN) * 100) + '%';
+        ui.laserCooldownBar.style.backgroundColor = laserCooldown === 0 ? 'red' : 'darkred';
         if (keys["e"]) {
             camera.roll += Math.PI*dt/2 * 0.3
         }
@@ -202,8 +262,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (keys["r"]) {
             camera.roll -= (0.4*dt*Math.sign(camera.roll))
-            
-            
         }
         if (keys["t"]) {
             camera.pitch -= (0.4*dt*Math.sign(camera.pitch))
@@ -217,8 +275,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
             ui.speedBar.style.width = pct + '%';
         }
+            // Update Lasers
+        for (let i = lasers.length - 1; i >= 0; i--) {
+            const l = lasers[i];
+            l.life -= dt;
+            
+            // Move laser: Position = Position + (Direction * Speed * dt)
+            l.p.x += l.v.x * l.speed * dt;
+            l.p.y += l.v.y * l.speed * dt;
+            l.p.z += l.v.z * l.speed * dt;
 
-        renderFrame(entities, dt, frameCount)
+            if (l.life <= 0) lasers.splice(i, 1);
+        }
+
+        renderFrame(entities, dt, frameCount, lasers)
 
         requestAnimationFrame(loop)
     }
