@@ -1,3 +1,4 @@
+import { M3 } from "../math/matrix.js"
 const vs = [
     // nose
     {x:  0.00, y:  0.00, z: -0.50},
@@ -43,4 +44,4 @@ const fs = [
     [3,6,11,'#a8201a'],
 ]
 
-export const ship = {vs, fs}
+export const ship = {vs: vs.map(v => M3(v).scale(3).val()), fs}

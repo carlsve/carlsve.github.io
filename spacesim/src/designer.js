@@ -16,13 +16,12 @@ document.addEventListener('DOMContentLoaded', function() {
         pitch: 0,
         roll: 0,
         thrust: 0,
-        maxThrust: 0.4,
-        velocity: 0.1,
-        forwardThrust: 0,
-        backwardThrust: 0,
-        leftThrust: 0,
-        rightThrust: 0
+        maxThrust: 20,
+        velocity: 5,
+        forward: { s: 0, maxS: 20, v: 5, a: 1 },
+        side:    { s: 0, maxS: 10, v: 3, a: 1 },
     }
+
     const meshes = {
         cube: rewireMesh(cube),
         ship,
@@ -33,15 +32,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const vowels = ['a','e','i','o','u','y']
     const consonants = ['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z']
     const planetColors = [
-        [[0,1,0], [0,0,1]],
-        [[1,0,1], [0,0,1]],
-        [[0,0,1], [0,1,1]],
-        [[0,1,1], [1,0,1]],
-        [[1,1,0], [1,0,1]],
+        [[0,255,0], [0,0,255]],
+        [[255,0,255], [0,0,255]],
+        [[0,0,255], [0,255,255]],
+        [[0,255,255], [255,0,255]],
+        [[255,255,0], [255,0,255]],
     ]
 
     function makePlanet(isSun = false) {
-        let [col1, col2] = isSun ? [[1,0,0],[1,1,0]] :
+        let [col1, col2] = isSun ? [[255,0,0],[255,255,0]] :
             planetColors[Math.floor(Math.random()*planetColors.length)]
         return {
             name: isSun ? vowels[Math.floor(Math.random()*vowels.length)] + consonants[Math.floor(Math.random()*consonants.length)] + consonants[Math.floor(Math.random()*consonants.length)] + vowels[Math.floor(Math.random()*vowels.length)] + consonants[Math.floor(Math.random()*consonants.length)] : consonants[Math.floor(Math.random()*consonants.length)] + vowels[Math.floor(Math.random()*vowels.length)] + consonants[Math.floor(Math.random()*consonants.length)] + consonants[Math.floor(Math.random()*consonants.length)] + vowels[Math.floor(Math.random()*vowels.length)] + consonants[Math.floor(Math.random()*consonants.length)],
@@ -58,11 +57,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function makeNPC() {
+        return {
+            type: 'ship',
+            p: {
+                x: -30 + Math.random()*60,
+                y: -10 + Math.random()*20,
+                z: -30 + Math.random()*60,
+            },
+            yaw:   Math.random() * Math.PI * 2,
+            pitch: 0,
+            roll:  0,
+            forward: { s: 0, maxS: 20, v: 10 },
+            goalIdx:   null,
+            waitTimer: Math.random() * 3, // stagger initial departures
+        }
+    }
+
     const entities = [
         { p: {x:5,y:0,z:5}, type: 'teapot' },
         makePlanet(true),
-        ...Array.from({ length: 20 }, _ => makePlanet())
+        ...Array.from({ length: 20 }, _ => makePlanet()),
+        ...Array.from({ length: 400 }, _ => makeNPC()),
     ]
+    const planets = entities.filter(e => e.type === 'planet')
 
     const ui = {
         renderPoints: document.querySelector('#renderPoints'),
@@ -94,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Laser cooldown bar
     if (!ui.laserCooldownContainer) {
-        ui.laserCooldownContainer = makeDiv('laser-cooldown-container', 330, 10);
+        ui.laserCooldownContainer = makeDiv('laser-cooldown-container', 500, 10);
         ui.laserCooldownContainer.style.width = '200px';
         ui.laserCooldownContainer.style.height = '20px';
         ui.laserCooldownContainer.style.border = '1px solid red';
@@ -109,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 1. Create the container (the outline)
     if (!ui.speedContainer) {
-        ui.speedContainer = makeDiv('speed-container', 300, 10); // Placed below FPS
+        ui.speedContainer = makeDiv('speed-container', 450, 10); // Placed below FPS
         ui.speedContainer.style.width = '200px';
         ui.speedContainer.style.height = '20px';
         ui.speedContainer.style.border = '1px solid lime';
@@ -164,6 +182,60 @@ document.addEventListener('DOMContentLoaded', function() {
     let frameCount = 0;
 
 
+    function updateNPCs(dt) {
+        if (planets.length === 0) return;
+        for (const npc of entities) {
+            if (npc.type !== 'ship') continue;
+
+            // Lazy goal assignment
+            if (npc.goalIdx === null) {
+                npc.goalIdx = Math.floor(Math.random() * planets.length);
+            }
+
+            // Waiting at destination
+            if (npc.waitTimer > 0) {
+                npc.waitTimer -= dt;
+                npc.forward.s = Math.max(0, npc.forward.s - npc.forward.v * dt);
+                continue;
+            }
+
+            const goal = planets[npc.goalIdx];
+            const dx = goal.p.x - npc.p.x;
+            const dy = goal.p.y - npc.p.y;
+            const dz = goal.p.z - npc.p.z;
+            const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+            // Arrival check
+            if (dist < 500) {
+                npc.waitTimer = 3 + Math.random() * 5;
+                let next;
+                do { next = Math.floor(Math.random() * planets.length); }
+                while (planets.length > 1 && next === npc.goalIdx);
+                npc.goalIdx = next;
+                continue;
+            }
+
+            // Steer toward goal — same yaw/pitch convention as camera movement
+            const targetYaw = Math.atan2(dx, dz);
+            const targetPitch = Math.atan2(dy, Math.sqrt(dx*dx + dz*dz));
+            const TURN_RATE = Math.PI * 0.8 * dt;
+
+            let dyaw = ((targetYaw - npc.yaw) % (Math.PI*2) + Math.PI*3) % (Math.PI*2) - Math.PI;
+            npc.yaw += Math.sign(dyaw) * Math.min(Math.abs(dyaw), TURN_RATE);
+
+            let dpitch = ((targetPitch - npc.pitch) % (Math.PI*2) + Math.PI*3) % (Math.PI*2) - Math.PI;
+            npc.pitch += Math.sign(dpitch) * Math.min(Math.abs(dpitch), TURN_RATE);
+
+            // Accelerate up to maxS
+            npc.forward.s = Math.min(npc.forward.maxS, npc.forward.s + npc.forward.v * dt);
+
+            // Move — same formula as player
+            npc.p.x += Math.sin(npc.yaw)   * npc.forward.s * dt;
+            npc.p.y += Math.sin(npc.pitch)  * npc.forward.s * dt;
+            npc.p.z += Math.cos(npc.yaw)    * npc.forward.s * dt;
+        }
+    }
+
     function fireLaser(camera) {
         const dir = {
             x: Math.sin(camera.yaw) * Math.cos(camera.pitch),
@@ -203,27 +275,38 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const dt = (currentTime - lastTime) / 1000
         lastTime = currentTime
-        camera.forwardThrust = camera.forwardThrust <= 0 ? 0 : camera.forwardThrust - dt*Math.sqrt(camera.velocity)/10
-        camera.backwardThrust = camera.backwardThrust <= 0 ? 0 : camera.backwardThrust - dt*Math.sqrt(camera.velocity)/10
-        camera.leftThrust = camera.leftThrust <= 0 ? 0 : camera.leftThrust - dt*Math.sqrt(camera.velocity)/10
-        camera.rightThrust = camera.rightThrust <= 0 ? 0 : camera.rightThrust - dt*Math.sqrt(camera.velocity)/10
+
+        // dampen
+        camera.forward.s -= Math.sign(camera.forward.s) * dt * Math.sqrt(camera.forward.v)/10
+        camera.side.s -= Math.sign(camera.side.s) * dt * Math.sqrt(camera.side.v)/10
+        if (Math.abs(camera.forward.s) < 0.01) {
+            camera.forward.s = 0
+        }
+        if (Math.abs(camera.side.s) < 0.01) {
+            camera.side.s = 0
+        }
+
         meshes.teapot.vs = meshes.teapot.vs.map(v => M3(v).rot_xz(dt/4).val())
 
         if (keys["w"]) {
-            camera.forwardThrust = camera.forwardThrust >= camera.maxThrust ? camera.maxThrust : camera.forwardThrust + dt * camera.velocity
+            camera.forward.s = camera.forward.s >= camera.forward.maxS ? camera.forward.maxS : camera.forward.s + dt * camera.forward.v
         }
         if (keys["s"]) {
-            camera.backwardThrust = camera.backwardThrust >= camera.maxThrust ? camera.maxThrust : camera.backwardThrust + dt * camera.velocity
+            camera.forward.s = camera.forward.s <= -camera.forward.maxS ? -camera.forward.maxS : camera.forward.s - dt * camera.forward.v
         }
         if (keys["a"]) {
-            camera.leftThrust = camera.leftThrust >= camera.maxThrust ? camera.maxThrust : camera.leftThrust + dt * camera.velocity
+            camera.side.s = camera.side.s >= camera.side.maxS ? camera.side.maxS : camera.side.s + dt * camera.side.v
         }
         if (keys["d"]) {
-            camera.rightThrust = camera.rightThrust >= camera.maxThrust ? camera.maxThrust : camera.rightThrust + dt * camera.velocity
+            camera.side.s = camera.side.s <= -camera.side.maxS ? -camera.side.maxS : camera.side.s - dt * camera.side.v
         }
-        camera.x += Math.sin(camera.yaw) * camera.forwardThrust - Math.sin(camera.yaw) * camera.backwardThrust - Math.cos(camera.yaw) * camera.leftThrust + Math.cos(camera.yaw) * camera.rightThrust
-        camera.y += Math.sin(camera.pitch) * camera.forwardThrust - Math.sin(camera.pitch) * camera.backwardThrust
-        camera.z += Math.cos(camera.yaw) * camera.forwardThrust - Math.cos(camera.yaw) * camera.backwardThrust + Math.sin(camera.yaw) * camera.leftThrust - Math.sin(camera.yaw) * camera.rightThrust
+        if (keys["f"]) {
+            camera.forward.s -= Math.sign(camera.forward.s) * dt * Math.sqrt(camera.forward.v)
+            camera.side.s -= Math.sign(camera.side.s) * dt * Math.sqrt(camera.side.v)
+        }
+        camera.x += (Math.sin(camera.yaw) * camera.forward.s - Math.cos(camera.yaw) * camera.side.s) * dt
+        camera.y += (Math.sin(camera.pitch) * camera.forward.s) * dt
+        camera.z += (Math.cos(camera.yaw) * camera.forward.s + Math.sin(camera.yaw) * camera.side.s) * dt
         laserCooldown = Math.max(0, laserCooldown - dt);
         if (keys[" "] && laserCooldown === 0) {
             fireLaser(camera);
@@ -270,8 +353,8 @@ document.addEventListener('DOMContentLoaded', function() {
         frameCount++;
         if (frameCount % 30 === 0) { // Update every 10 frames
             ui.fpsDisplay.innerText = `FPS: ${Math.round(1 / dt)}`;
-            ui.cameraPos.innerText = `seconds per frame: ${dt.toFixed(4)}\nCamera Pos:\n${Object.entries(window.designer.camera).map(([k,v]) => `${k}: ${v.toFixed(2)}`).join('\n')}`;
-            const pct = Math.min(Math.max(Math.max(...[camera.forwardThrust,camera.backwardThrust,camera.leftThrust,camera.rightThrust]) / camera.maxThrust * 100, 0), 100);
+            ui.cameraPos.innerText = `seconds per frame: ${dt.toFixed(4)}\nCamera Pos:\n${JSON.stringify(camera, null, 2)}`;
+            const pct = Math.min(Math.max(Math.sign(camera.forward.s) * camera.forward.s / camera.forward.maxS * 100, 0), 100);
 
             ui.speedBar.style.width = pct + '%';
         }
@@ -288,6 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (l.life <= 0) lasers.splice(i, 1);
         }
 
+        updateNPCs(dt)
         renderFrame(entities, dt, frameCount, lasers)
 
         requestAnimationFrame(loop)
