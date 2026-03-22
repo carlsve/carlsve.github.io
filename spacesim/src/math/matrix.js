@@ -27,6 +27,14 @@ function dot(a,b) {
     return a.x*b.x + a.y*b.y + a.z*b.z
 }
 
+function scale(a, c) {
+    return {
+        x: a.x*c,
+        y: a.y*c,
+        z: a.z*c
+    }
+}
+
 function rotate_xz(v, angle) {
     const c = Math.cos(angle)
     const s = Math.sin(angle)
@@ -57,13 +65,19 @@ function rotate_yz(v, angle) {
     }
 }
 
+function distance(a, b) {
+    return Math.sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z))
+}
+
 export const M3 = (v) => {
   return {
     val: () => v,
     dot: b => dot(v, b),
+    dist: c => distance(v, c),
     add: b => M3(add(v, b)),
     sub: b => M3(sub(v, b)),
     cross: b => M3(cross(v, b)),
+    scale: b => M3(scale(v, b)),
     rot_xy: angle => M3(rotate_xy(v, angle)),
     rot_xz: angle => M3(rotate_xz(v, angle)),
     rot_yz: angle => M3(rotate_yz(v, angle)),
