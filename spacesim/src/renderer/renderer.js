@@ -52,6 +52,45 @@ export function initRender(game, camera, meshes) {
         }
     }
 
+    function drawLaser(p1, p2) {
+        const NEAR = 0.1;
+        let a = cameraTransform(p1);
+        let b = cameraTransform(p2);
+
+        // Clip segment to near plane — skip if both endpoints are behind camera
+        if (a.z <= NEAR && b.z <= NEAR) return;
+        if (a.z <= NEAR) a = intersectNear(b, a, NEAR);
+        if (b.z <= NEAR) b = intersectNear(a, b, NEAR);
+
+        const s1 = project_screen(a);
+        const s2 = project_screen(b);
+
+        // Outer glow
+        ctx.strokeStyle = 'rgba(255, 40, 40, 0.25)';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(s1.x, s1.y);
+        ctx.lineTo(s2.x, s2.y);
+        ctx.stroke();
+
+        // Mid glow
+        ctx.strokeStyle = 'rgba(255, 80, 80, 0.5)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(s1.x, s1.y);
+        ctx.lineTo(s2.x, s2.y);
+        ctx.stroke();
+
+        // Bright core
+        ctx.strokeStyle = '#FFAAAA';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(s1.x, s1.y);
+        ctx.lineTo(s2.x, s2.y);
+        ctx.stroke();
+    }
+
     function triangle(p1, p2, p3, col) {
         ctx.fillStyle = col
         ctx.beginPath()
@@ -158,7 +197,7 @@ export function initRender(game, camera, meshes) {
 
     let time = 0
 
-    function renderFrame(entities, dt, playerStats = { thrust: 0, maxSpeed: 100 }) {
+    function renderFrame(entities, dt, frameCount, lasers) {
         time += dt
         clear()
 
@@ -207,7 +246,40 @@ export function initRender(game, camera, meshes) {
                 if (window.designer.settings.renderTriangles) triangle(t.p1, t.p2, t.p3, t.col)
                 if (window.designer.settings.renderWireframe) wireframe(t.p1, t.p2, t.p3)
             }
-        }        
+
+        }
+        for (const l of lasers) {
+            const depth = cameraTransform(l.p).z;
+            if (depth <= 0 || depth > 2000) continue;
+
+            // Draw a line from current position to a bit behind it
+            const tail = {
+                x: l.p.x - l.v.x * 5,
+                y: l.p.y - l.v.y * 5,
+                z: l.p.z - l.v.z * 5
+            };
+            
+            drawLaser(l.p, tail);
+        }
+
+        // Crosshair
+        const cx = game.width / 2;
+        const cy = game.height / 2;
+        const ARM = 12;
+        const GAP = 4;
+        ctx.strokeStyle = 'rgba(0, 255, 0, 0.85)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        // Horizontal
+        ctx.moveTo(cx - ARM - GAP, cy); ctx.lineTo(cx - GAP, cy);
+        ctx.moveTo(cx + GAP, cy);       ctx.lineTo(cx + ARM + GAP, cy);
+        // Vertical
+        ctx.moveTo(cx, cy - ARM - GAP); ctx.lineTo(cx, cy - GAP);
+        ctx.moveTo(cx, cy + GAP);       ctx.lineTo(cx, cy + ARM + GAP);
+        ctx.stroke();
+        // Centre dot
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.85)';
+        ctx.fillRect(cx - 1, cy - 1, 2, 2);
     }
 
     return { renderFrame }
