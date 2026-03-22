@@ -7,6 +7,7 @@ export function rewireMesh({vs, fs}) {
         const c = vs[ci]
         const ab = M3(b).sub(a).val()
         const ac = M3(c).sub(a).val()
+        return [ai,ci,bi,col]
     
         if (M3(ab).cross(ac).dot(a) < 0) {
             return [ai,ci,bi,col] // flip
