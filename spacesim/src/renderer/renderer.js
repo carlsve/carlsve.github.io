@@ -101,13 +101,16 @@ export function initRender(game, camera, meshes) {
         ctx.fill()
     }
 
-    function circle(p, radius, depth, col, name) {
+    function circle(p, radius, depth, colTop, colBottom, name) {
         let r = Math.abs(radius / depth)
 
         const { x, y } = project_screen(cameraTransform(p))
+        const grad = ctx.createLinearGradient(x, y - r, x, y + r);
+        grad.addColorStop(0, colTop);
+        grad.addColorStop(1, colBottom);
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fillStyle = col;
+        ctx.fillStyle = grad;
         ctx.fill();
         ctx.closePath();
         ctx.lineWidth = 1
@@ -214,15 +217,29 @@ export function initRender(game, camera, meshes) {
             if (e.type === 'planet') {
                 if (e.depth <= 0) continue;
                 const t_ = (Math.sin(time) + 1) / 2
-                const [r, g, b] = e.col1.map((c1, i) => Math.floor(255 * (((1 - t_) * c1) + t_ * e.col2[i])))
-                circle(e.p, e.radius, e.depth, `rgb(${r},${g},${b})`, e.name)
+                const lerp = (c1, c2, t) => {
+                    return c1.map((v, i) => (1 - t) * v + t * c2[i])
+                }
+                const toRgb = ([r, g, b]) => {
+                    return `rgb(${r},${g},${b})`
+                }
+
+                circle(e.p, e.radius, e.depth, e.isSun ? toRgb(lerp(e.col2, e.col1, t_)) : toRgb(e.col1), e.isSun ? toRgb(lerp(e.col1, e.col2, t_)) : toRgb(e.col2), e.name)
                 continue
             }
 
             if (e.depth > 1000 || e.depth <= 0) continue;
             
             const { vs, fs } = meshes[e.type]
-            let tvs = vs.map(v => cameraTransform(M3(v).add(e.p).val()))
+            let tvs = vs.map(v => {
+                let m = M3(v)
+                if (e.yaw !== undefined) {
+                    // Ship mesh nose points toward -z; flip 180° then apply negated yaw/pitch
+                    // (negated because rot_xz/rot_yz are the inverse/camera-space convention)
+                    m = m.rot_xz(Math.PI).rot_xz(-e.yaw).rot_yz(-e.pitch)
+                }
+                return cameraTransform(m.add(e.p).val())
+            })
             const tris = []
 
             for (const t of fs) {
