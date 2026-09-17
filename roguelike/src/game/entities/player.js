@@ -1,61 +1,88 @@
-import { bus } from '../../engine/bus.js'
-import { logger } from '../../utils/logger.js'
-import { pTimeout } from '../../utils/timers.js'
 import { add2d, clamp2d, eq2d } from '../../utils/vec2d.js'
-import { aStar } from '../algorithms/astar.js'
+import { hasLOS } from '../algorithms/hasLOS.js'
+import { melee, range } from '../combat.js'
+import { initSkills, initStats } from './stats.js'
 
-export const getPlayer = (world, startPos) => {
-    const player = { pos: startPos }
+export const getPlayer = (game, startPos) => {
+    const stats = initStats()
+    const skills = initSkills({ warrior: 7 }, stats)
+    const player = {
+        pos: startPos,
+        name: 'player',
+        stats,
+        skills,
+        level: 1,
+        xp: 0
+    }
 
-    const perform = async ({ action, ...payload }) => {
+    player.getXP = (xp) => {
+        console.log(`player granted ${xp} xp`)
+        player.xp += xp
+        if (player.xp >= 125*player.level) {
+            player.xp -= 125*player.level
+            player.level += 1
+            console.log(`player leveled up to ${player.level}!`)
+            player.skills.incrementWarrior()
+            player.stats.currentLife = player.stats.secondary.life()
+            player.stats.currentMana = player.stats.secondary.mana()
+        }
+    }
+
+    const attack = (enemy, type) => {
+        console.log("player attacked enemy")
+        if (type === 'melee') {
+            melee(game.rng, player, enemy)
+        } else {
+            if (player.stats.currentMana >= 5) {
+                range(game.rng, player, enemy)
+                player.stats.currentMana -= 5
+            } else {
+                console.log("Not enough mana!")
+            }
+        }
+
+        if (enemy.stats.currentLife <= 0) {
+            player.getXP(50)
+        }
+    }
+
+    player.perform = ({ action, ...payload }) => {
         switch (action) {
-            case 'up':
-            case 'down':
-            case 'left':
-            case 'right':
-                const dpos = {
-                    up: [0, -1],
-                    down: [0, 1],
-                    left: [-1, 0],
-                    right: [1, 0],
-                }[action]
-        
-                const nextPos = clamp2d(add2d(player.pos, dpos), [0,0], add2d([-1, -1], world.dims))
+            case 'step': {
+                // try to step
+                // possible?
+                const nextPos = clamp2d(add2d(player.pos, payload.stepTo), [0,0], add2d([-1, -1], game.world.dims))
+                for (const enemy of game.enemies) {
+                    if (eq2d(nextPos, enemy.pos)) {
+                        attack(enemy, 'melee')
+                        return true
+                    }
+                }
+
                 const outOfBounds = eq2d(nextPos, player.pos)
-                if (!outOfBounds && world.at(...nextPos) === 0) {
+                if (!outOfBounds && game.world.at(...nextPos) === 0) {
                     player.pos = nextPos
-                    bus.emit('world:tick')
+                    return true
                 }
-                break;
-            case 'mouse':
-                logger.debug(world.at(...payload.pos))
-                if (world.at(...payload.pos) !== 0) return;
-                const playerPos = {x: player.pos[0], y: player.pos[1]}
-                const goalPos = {x: payload.pos[0], y: payload.pos[1]}
-        
-                const path = (aStar(world.board, playerPos, goalPos) ?? [])
-                    .map(({x,y}) => [x,y])
-        
-                logger.debug("A* result:")
-                logger.debug(path)
-        
-                for (const pathPos of path) {
-                    await pTimeout(100)
-                    logger.debug(pathPos)
-                    player.pos = pathPos
-                    bus.emit('world:tick')
+
+                return false
+            }
+            case 'attackRange': {
+                if (!hasLOS(game.world.board, player.pos, payload.pos)) {
+                    return false
                 }
-                break;
+                for (const enemy of game.enemies) {
+                    if (eq2d(payload.pos, enemy.pos)) {
+                        attack(enemy, 'range')
+                        return true
+                    }
+                }
+                return false
+            }
             default:
                 throw new Error(`action "${action}" not implemented`)
         }
     }
-
-    
-    bus.on('player:action', (action) => {
-        logger.debug('player:action', action)
-        perform(action)
-    })
 
     return player
 }

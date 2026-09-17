@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
         thrust: 0,
         maxThrust: 20,
         velocity: 5,
-        forward: { s: 0, maxS: 20, v: 5, a: 1 },
-        side:    { s: 0, maxS: 10, v: 3, a: 1 },
+        forward: { s: 0, maxS: 30, v: 5, a: 1 },
+        side:    { s: 0, maxS: 15, v: 3, a: 1 },
     }
 
     const meshes = {
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { p: {x:5,y:0,z:5}, type: 'teapot' },
         makePlanet(true),
         ...Array.from({ length: 20 }, _ => makePlanet()),
-        ...Array.from({ length: 400 }, _ => makeNPC()),
+        ...Array.from({ length: 100 }, _ => makeNPC()),
     ]
     const planets = entities.filter(e => e.type === 'planet')
 
@@ -315,10 +315,10 @@ document.addEventListener('DOMContentLoaded', function() {
         ui.laserCooldownBar.style.width = ((1 - laserCooldown / LASER_COOLDOWN) * 100) + '%';
         ui.laserCooldownBar.style.backgroundColor = laserCooldown === 0 ? 'red' : 'darkred';
         if (keys["e"]) {
-            camera.roll += Math.PI*dt/2 * 0.3
+            camera.roll += Math.PI*dt/2 * 0.4
         }
         if (keys["q"]) {
-            camera.roll -= Math.PI*dt/2 * 0.3
+            camera.roll -= Math.PI*dt/2 * 0.4
         }
         if (keys["z"]) {
             camera.y -= dt
@@ -327,13 +327,13 @@ document.addEventListener('DOMContentLoaded', function() {
             camera.y += dt;
         }
         if (keys["ArrowLeft"]) {
-            camera.yaw -= Math.cos(camera.roll) * Math.PI*dt/2 * 0.3
-            camera.pitch += Math.sin(camera.roll) * Math.PI*dt/2 * 0.3
+            camera.yaw -= Math.cos(camera.roll) * Math.PI*dt/2 * 0.5
+            camera.pitch += Math.sin(camera.roll) * Math.PI*dt/2 * 0.5
             
         }
         if (keys["ArrowRight"]) {
-            camera.yaw += Math.cos(camera.roll) * Math.PI*dt/2 * 0.3
-            camera.pitch -= Math.sin(camera.roll) * Math.PI*dt/2 * 0.3
+            camera.yaw += Math.cos(camera.roll) * Math.PI*dt/2 * 0.5
+            camera.pitch -= Math.sin(camera.roll) * Math.PI*dt/2 * 0.5
         }
         if (keys["ArrowUp"]) {
             camera.yaw += Math.sin(camera.roll) * Math.PI*dt/2 * 0.6
