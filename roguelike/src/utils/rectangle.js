@@ -1,3 +1,3 @@
-export const isPointInRect = ([x, y], {rx, ry, rw, rh}) =>
-    x >= rx && x < (rx + rw) &&
-    y >= ry && y < (ry + rh)
+export const isPointInRect = ([vx, vy], {x, y, w, h}) =>
+    vx >= x && vx < (x + w) &&
+    vy >= y && vy < (y + h)

@@ -1,0 +1,77 @@
+meleePower
+- Math.floor((burliness - 5)/3)
+- 1 point = 1 damage to whichever normal attack you would have dealt most of (Crushing, Slashing, Blasting) damage
+
+criticalChance
+- Math.floor(caddishness / 2)
+- 1 point = 1% chance to get double damage
+
+counterChance
+- Math.floor((nimbleness + caddishness) / 6)
+- 2 points = 1% chance to counter attack which will negate a melee attack or melee distance range attack and automatically make a free attack of your own.
+
+magicPower
+- Math.floor(sagacity / 2)
+- The ratio that determines how magic power contributes to potency varies by spell. It applies to spell-like effects
+
+haywire
+- Math.floor(savvy / 2)
+- 1 point = 1% spell critical chance
+
+magicResistance
+- Math.floor(stubbornness / 2)
+- 1 point = 1% chance to resist magic damage, leading to 50% damage reduction
+
+armourAbsorption
+- base value 0
+- 1 point = 1 less damage in normal attacks (Crushing, Slashing, Blasting)
+
+blockCance
+- Math.floor((burliness + stubbornness) / 6)
+- 1 point = 1% chance to block damage (75% reduction of normal attacks and 50% reduction of other attacks, processed after armor absorb and resist)
+
+dodgeChance
+- Math.floor(nimbleness / 2)
+- 1 point = 1% chance to dodge an attack completely. Critical hits cannot be dodged
+
+enemyDodgeReduction
+- Math.floor(nimbleness / 3)
+- 1 point = -1 point in enemy dodgeChance during attack
+
+sneakiness
+- Math.min(Math.floor(3/4 * (nimbleness + savvy)) - 20, 0)
+- Effective Aggro Radius = Base Vision Radius * (1 - (Sneakiness / 100))
+- If you manage to stack your Sneakiness to 100 or higher, the equation results in an effective aggro radius of 0 tiles
+- When you step directly onto an active trap, the game rolls a check against your Sneakiness. 1 point of Sneakiness acts as a flat 1% chance to skip the trap's trigger entirely, meaning 100 Sneakiness makes you entirely immune to triggering floor traps.
+
+visualSightRadius
+- base value 1, not affected by primary stats
+- at baseline 0, you see 5 tiles in every direction
+
+trapSightRadius
+- base value 1, not affected by primary stats
+- 1 same as visual sight radius but for traps
+
+trapAffinity
+- base value 0, not affected by primary stats
+- 10 tiers of traps, if you are same tier you are guaranteed to disable, if you are above in tier you can pick up the trap. higher level tiers of traps start at 45% relative to your level and decrease by 5% to 0% minimum.
+
+life
+- burliness + caddishness + 5
+- maximum life points you have. any effect affecting your life will decrease hp too, any effect affecting burliness or caddishness will only affect max hp.
+
+lifeRegen
+- base value 0, not affected by primary stats
+- 1 hp regen per 7 spent turns (5 on easy, 7 medium, 13 hard in dredmor). 1 point = 1 less turn to regen.
+
+mana
+- sagacity * 2 + 5
+- maximum mana points you have. any effect affecting your mana will decrease current mana too, any effect affecting sagacity will only affect max mana.
+
+manaRegen
+- base value 0, not affected by primary stats
+- 1 mana regen per 7 spent turns (5 on easy, 7 medium, 8 hard in dredmor). 1 point = 1 less turn to regen.
+
+magic reflect
+- base value 0, not affected by primary stats
+- 1 point = 1% chance to reflect a missile type magic attack

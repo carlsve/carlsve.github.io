@@ -9,3 +9,4 @@ export const clamp2d = ([x,y], [minX, minY], [maxX, maxY]) => [
     Math.max(minY, Math.min(maxY, y))
 ]
 export const eq2d = ([x1, y1], [x2, y2]) => x1 === x2 && y1 === y2
+export const hypot2d = ([x, y]) => Math.sqrt(x*x + y*y)
