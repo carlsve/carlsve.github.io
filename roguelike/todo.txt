@@ -5,6 +5,15 @@ Definitives:
     - maybe some type of alert system?
 - integrate stats more
     - sneakiness
+- gear (huge complexity feature):
+    - items
+    - inventory grid
+    - buttons (clickability)
+    - stat window
+
+
+Massive feature:
+- Side Menu, move down bottom menu
 
 Experimentables:
 - Other types of dungeon generation methods

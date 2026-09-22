@@ -1,7 +1,7 @@
 import { add2d, clamp2d, eq2d, hypot2d, sub2d } from '../../utils/vec2d.js'
 import { hasLOS } from '../algorithms/hasLOS.js'
 import { nextPosTowardGoal } from '../algorithms/nextPosTowardsGoal.js'
-import { melee } from '../combat.js'
+import { melee } from './combat.js'
 import { initSkills, initStats } from './stats.js'
 
 export const getEnemy = (game, startPos) => {
@@ -20,6 +20,12 @@ export const getEnemy = (game, startPos) => {
     const attack = (player) => {
         console.log("enemy attacked player")
         melee(game.rng, enemy, player)
+    }
+
+    const alert = () => {
+        enemy.seesPlayer = true
+        enemy.lastSeenAt = [...game.player.pos]
+        enemy.lastSeenTick = game.tick
     }
 
     const perform = ({ action, ...payload }) => {
@@ -57,9 +63,7 @@ export const getEnemy = (game, startPos) => {
 
     enemy.act = () => {
         if (Math.round(hypot2d(sub2d(enemy.pos, game.player.pos))) < (5 + enemy.stats.secondary.visualSightRadius()) && hasLOS(game.world.board, enemy.pos, game.player.pos)) {
-            enemy.seesPlayer = true
-            enemy.lastSeenAt = [...game.player.pos]
-            enemy.lastSeenTick = game.tick
+            alert()
             perform({action: 'move_to_goal', pos: game.player.pos})
         } else if (enemy.lastSeenTick !== null && game.tick - enemy.lastSeenTick < 10) {
             perform({action: 'move_to_goal', pos: enemy.lastSeenAt})
@@ -68,6 +72,7 @@ export const getEnemy = (game, startPos) => {
             perform({action: 'random_walk'})
         }
     }
+    enemy.alert = alert
 
     return enemy
 }

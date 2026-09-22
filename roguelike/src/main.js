@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         current: {
             onKey: () => {},
             onMouse: () => {},
+            onMouseMove: () => {},
         },
         setScene(scene) {
             this.current = scene
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     document.addEventListener('keydown', (e) => sceneControl.current.onKey(e))
     canvas.canvas.addEventListener('click', (e) => sceneControl.current.onMouse(e))
+    canvas.canvas.addEventListener('mousemove', (e) => sceneControl.current.onMouseMove(e))
     
     function go(name) {
         switch (name) {

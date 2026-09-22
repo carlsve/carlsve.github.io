@@ -19,6 +19,12 @@ export const initTurn = (game, onDeath, canvas) => ({ action, ...payload }) =>  
         case 'attackRange':
             spent = game.player.perform({ action, ...payload })
             break
+        case 'drop':
+            spent = game.player.perform({ action, ...payload })
+            break
+        case 'pickup':
+            spent = game.player.perform({ action, ...payload })
+            break
     }
     if (game.player.stats.currentLife <= 0) {
         onDeath()

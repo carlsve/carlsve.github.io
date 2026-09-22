@@ -1,7 +1,7 @@
 import { generateBSP } from './generation/bsp.js'
 import { getPlayer } from './entities/player.js'
 import { world } from './world.js'
-import { keyHandler, mouseHandler } from './input.js'
+import { keyHandler, mouseHandler, mouseMoveHandler } from './input.js'
 import { getEnemy } from './entities/enemy.js'
 import { initTurn } from './turn.js'
 
@@ -15,8 +15,15 @@ export const initGame = (canvas, rng, onDeath) => {
         tick: 0,
         walkId: 0,
         visible: [],
-        attackMode: 'melee'
+        attackMode: 'melee',
+        inventory: Array.from(Array(60), () => null),
+        heldItem: null,
+        mousePos: null,
     }
+
+    game.inventory[0] = { tile: 'sword', name: 'wooden sword', type: 'gear:weapon', stats: { damage: [{type: 'crushing', amount: 2}], }},
+    game.inventory[1] = { tile: 'helmet', name: 'wooden helmet', type: 'gear:helmet', stats: { armour: [{type: 'crushing', amount: 2}], secondary: {armourAbsorption: 3}, }},
+    game.inventory[2] = { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } },
 
     game.rng = rng
     game.world.init([80, 60])
@@ -37,12 +44,25 @@ export const initGame = (canvas, rng, onDeath) => {
         ]
         return getEnemy(game, enemyStartPos)
     })
+    game.items = [
+        { tile: 'sword', name: 'wooden sword', type: 'gear:weapon', stats: { damage: [{type: 'crushing', amount: 2}], }},
+        { tile: 'helmet', name: 'wooden helmet', type: 'gear:helmet', stats: { armour: [{type: 'crushing', amount: 2}], secondary: {armourAbsorption: 3}, }},
+        { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } },
+    ].map(item => {
+        const spawnRoomIndex = rng.randInRange(0, game.world.rooms.length)
+        const spawnRoom = game.world.rooms[spawnRoomIndex]
+        item.pos = [
+            rng.randInRange(spawnRoom.x, spawnRoom.x + spawnRoom.w),
+            rng.randInRange(spawnRoom.y, spawnRoom.y + spawnRoom.h),
+        ]
+        return item
+    })
     game.focusedEntity = game.player
     game.canvas = canvas
     const turn = initTurn(game, onDeath, canvas)
     game.onKey = keyHandler(turn)
     game.onMouse = mouseHandler(turn, game)
-
+    game.onMouseMove = mouseMoveHandler(game)
 
     turn({ action: 'wait' })
 

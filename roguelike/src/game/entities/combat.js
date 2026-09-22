@@ -1,4 +1,4 @@
-import { sub2d, apply2d } from "../utils/vec2d.js"
+import { sub2d, apply2d } from "../../utils/vec2d.js"
 
 const MAX_DEPTH = 100
 
@@ -27,7 +27,7 @@ export function melee(rng, attacker, defender, depth = 0) {
     // crit chance roll on attacker
     if (roll(attacker.stats.secondary.criticalChance())) {
         console.log(`${attacker.name} crits ${defender.name} for ${resolveMeleeDamage(attacker) * 2} life!`)
-        defender.stats.life -= attacker.stats.meleeDamage * 2
+        defender.stats.currentLife -= resolveMeleeDamage(attacker) * 2
         return
     }
 
@@ -72,7 +72,7 @@ export function range(rng, attacker, defender, depth = 0) {
     // crit chance roll on attacker
     if (roll(attacker.stats.secondary.criticalChance())) {
         console.log(`${attacker.name} crits ${defender.name} for ${resolveRangeDamage(attacker) * 2} life!`)
-        defender.stats.life -= attacker.stats.meleeDamage * 2
+        defender.stats.currentLife -= resolveRangeDamage(attacker) * 2
         return
     }
 

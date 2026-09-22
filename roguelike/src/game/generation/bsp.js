@@ -1,7 +1,7 @@
 const bsp = {
     roomFillPercentageMin: 0.5,
     roomFillPercentageMax: 0.8,
-    depth: 4,
+    depth: 3,
     corridorWidth: 2,
     splitWithinPercentage: 0.4,
     whratio: 1.25
