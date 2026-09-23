@@ -17,13 +17,24 @@ export const initGame = (canvas, rng, onDeath) => {
         visible: [],
         attackMode: 'melee',
         inventory: Array.from(Array(60), () => null),
+        gear: {
+            helmet: null,
+            body: null,
+            weapon1: null,
+            weapon2: null,
+            legs: null,
+            boots: null,
+            hands: null,
+            ring1: null,
+            ring2: null,
+        },
         heldItem: null,
         mousePos: null,
     }
 
-    game.inventory[0] = { tile: 'sword', name: 'wooden sword', type: 'gear:weapon', stats: { damage: [{type: 'crushing', amount: 2}], }},
-    game.inventory[1] = { tile: 'helmet', name: 'wooden helmet', type: 'gear:helmet', stats: { armour: [{type: 'crushing', amount: 2}], secondary: {armourAbsorption: 3}, }},
-    game.inventory[2] = { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } },
+    game.inventory[0] = { tile: 'sword', name: 'wooden sword', type: 'weapon', stats: { damage: [{type: 'crushing', amount: 2}], }}
+    game.inventory[1] = { tile: 'helmet', name: 'wooden helmet', type: 'helmet', stats: { armour: [{type: 'crushing', amount: 2}], secondary: {armourAbsorption: 3}, }}
+    game.inventory[2] = { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } }
 
     game.rng = rng
     game.world.init([80, 60])
@@ -35,7 +46,7 @@ export const initGame = (canvas, rng, onDeath) => {
         rng.randInRange(spawnRoom.y, spawnRoom.y + spawnRoom.h),
     ]
     game.player = getPlayer(game, playerStartPos)
-    game.enemies = Array.from(Array(15), () => {
+    game.enemies = Array.from(Array(20), () => {
         const spawnRoomIndex = rng.randInRange(0, game.world.rooms.length)
         const spawnRoom = game.world.rooms[spawnRoomIndex]
         const enemyStartPos = [
@@ -45,8 +56,9 @@ export const initGame = (canvas, rng, onDeath) => {
         return getEnemy(game, enemyStartPos)
     })
     game.items = [
-        { tile: 'sword', name: 'wooden sword', type: 'gear:weapon', stats: { damage: [{type: 'crushing', amount: 2}], }},
-        { tile: 'helmet', name: 'wooden helmet', type: 'gear:helmet', stats: { armour: [{type: 'crushing', amount: 2}], secondary: {armourAbsorption: 3}, }},
+        { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } },
+        { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } },
+        { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } },
         { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } },
     ].map(item => {
         const spawnRoomIndex = rng.randInRange(0, game.world.rooms.length)

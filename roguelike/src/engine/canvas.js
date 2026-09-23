@@ -26,13 +26,25 @@ export const getCanvas = async () => {
     const bottomHUDDims = {x: 0, y: gameWindowDims.h, w: gameWindowDims.w, h: canvas.height - gameWindowDims.h}
     const rightHUDDims = {x: gameWindowDims.w, y: 0, w: canvas.width - gameWindowDims.w, h: canvas.height}
     const inventoryDims = {x: rightHUDDims.x, y: rightHUDDims.y + rightHUDDims.h - 192, w: 320, h: 192, cols: 10, rows: 6}
-    const gearDims = {x: 0, y: 0, w: 0, h: 0}
+    const gearDims = {x: rightHUDDims.x, y: rightHUDDims.y + rightHUDDims.h - 192 - 4*ts, w: 3*ts, h: 4*ts}
+    const gearSlots = {
+        helmet:  [gearDims.x + 1*ts, gearDims.y + 0*ts],
+        body:    [gearDims.x + 1*ts, gearDims.y + 1*ts],
+        weapon1: [gearDims.x + 0*ts, gearDims.y + 1*ts],
+        weapon2: [gearDims.x + 2*ts, gearDims.y + 1*ts],
+        legs:    [gearDims.x + 1*ts, gearDims.y + 2*ts],
+        boots:   [gearDims.x + 1*ts, gearDims.y + 3*ts],
+        hands:   [gearDims.x + 0*ts, gearDims.y + 3*ts],
+        ring1:   [gearDims.x + 2*ts, gearDims.y + 2*ts],
+        ring2:   [gearDims.x + 2*ts, gearDims.y + 3*ts],
+    }
     return {
         gameWindowDims,
         bottomHUDDims,
         rightHUDDims,
         inventoryDims,
         gearDims,
+        gearSlots,
         ts,
         canvas,
         ctx,

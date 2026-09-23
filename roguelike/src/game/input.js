@@ -56,6 +56,11 @@ export const mouseHandler = (turn, game) => async (e) => {
         return
     }
 
+    if (isPointInRect(mousePos, game.canvas.gearDims)) {
+        handleGearClick(game, mousePos)
+        return
+    }
+
     if (game.heldItem) {
         if (game.heldItem.from && game.inventory[game.heldItem.from] === null) {
             game.inventory[game.heldItem.from] = game.heldItem.item
@@ -81,7 +86,7 @@ export const mouseMoveHandler = (game) => (e) => {
     }
 }
 
-export const handleInventoryClick = (game, mousePos) => {
+const handleInventoryClick = (game, mousePos) => {
     const inventoryDims = game.canvas.inventoryDims
     const clickedSlot = {
         x: Math.floor((mousePos[0] - inventoryDims.x) / game.canvas.ts),
@@ -101,7 +106,9 @@ export const handleInventoryClick = (game, mousePos) => {
         }
     } else {
         if (item === null) {
-            game.inventory[game.heldItem.from] = null
+            if (game.inventory[game.heldItem.from]) {
+                game.inventory[game.heldItem.from] = null
+            }
             game.inventory[inventoryIndex] = game.heldItem.item
             game.heldItem = null
             game.mousePos = mousePos
@@ -115,7 +122,37 @@ export const handleInventoryClick = (game, mousePos) => {
     }
 }
 
-export const handleGameWindowClick = async (turn, game, mousePos) => {
+const handleGearClick = (game, mousePos) => {
+    if (game.heldItem) {
+        for (const [gearType, gearSlotPos] of Object.entries(game.canvas.gearSlots)) {
+            if (isPointInRect(mousePos, { x: gearSlotPos[0], y: gearSlotPos[1], w: game.canvas.ts, h: game.canvas.ts })) {
+                if (gearType.startsWith(game.heldItem.item.type)) {
+                    game.gear[gearType] = game.heldItem.item
+                    if (game.inventory[game.heldItem.from]) {
+                        game.inventory[game.heldItem.from] = null
+                    }
+                    game.heldItem = null
+                    render({ canvas: game.canvas, game })
+                    return
+                }
+            }
+        }
+    } else {
+        for (const [gearType, gearSlotPos] of Object.entries(game.canvas.gearSlots)) {
+            if (isPointInRect(mousePos, { x: gearSlotPos[0], y: gearSlotPos[1], w: game.canvas.ts, h: game.canvas.ts })) {
+                if (game.gear[gearType]) {
+                    game.heldItem = { item: game.gear[gearType], from: null }
+                    game.gear[gearType] = null
+                    game.mousePos = mousePos
+                    render({ canvas: game.canvas, game })
+                    return
+                }
+            }
+        }
+    }
+}
+
+const handleGameWindowClick = async (turn, game, mousePos) => {
     const viewPortPos = game.canvas.getTilePosAt(...mousePos)
     const { vx, vy } = camera(game.focusedEntity, game.world)
     const worldPos = add2d([vx, vy], viewPortPos)
@@ -136,6 +173,19 @@ export const handleGameWindowClick = async (turn, game, mousePos) => {
 
     // Drop Held Item
     if (game.heldItem) {
+        // Drop on Player -> Pick up in Inventory
+        if (eq2d(worldPos, game.player.pos)) {
+            if (game.inventory.some(item => item === null)) {
+
+                if (game.inventory[game.heldItem.from]) {
+                    game.inventory[game.heldItem.from] = null
+                }
+                game.inventory[game.inventory.findIndex(item => item === null)] = game.heldItem.item
+                game.heldItem = null
+                render({ canvas: game.canvas, game })
+            }
+            return
+        }
         const [dropX, dropY] = sub2d(worldPos, game.player.pos)
         const dropDir = Math.abs(dropX) > Math.abs(dropY) ? [Math.sign(dropX), 0] : [0, Math.sign(dropY)]
         const dropAt = add2d(game.player.pos, dropDir)

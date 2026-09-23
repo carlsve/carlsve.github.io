@@ -170,4 +170,12 @@ const renderRightSideHUD = (canvas, game) => {
             }
         }
     }
+
+    // Gear Grid
+    const gearDims = canvas.gearDims
+    canvas.ctx.fillStyle = '#444444'
+    canvas.ctx.fillRect(gearDims.x, gearDims.y, gearDims.w, gearDims.h)
+    for (const [gearType, gearPos] of Object.entries(canvas.gearSlots)) {
+        canvas.drawTile((game.gear[gearType] && game.gear[gearType].tile) || 'emptyInventorySlot', ...gearPos)
+    }
 }

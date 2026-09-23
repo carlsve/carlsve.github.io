@@ -1,24 +1,35 @@
 Definitives:
-- doors
-    * need to attach the corridor points to the room object
-- enemy alerted if attacked by range (and other stuff)
-    - maybe some type of alert system?
+- gear (huge complexity feature):
+    - actual damage types and damage calculations
+    - item info on hover
+- right mouse button
+    - consume consumables
+    - equip equippables
+    - shoot enemies
+- spells/abilities (huge feature)
+    - spell/ability/consumable bar bottom HUD
+    - click on inventory to move to bottom bar
+    - select or 1..10 and shoot
+    - assign spells to bottom bar (another tab, skill tab)
+- choosable skill trees (huge feature)
+- floors
+- enemy types (huge feature)
+    - minibosses
+    - magic casters
+    - bosses (quests, check room types feature)
+- room types (huge feature)
+    - quest room
+    - monster zoo (every tile is a monster)
+    - shops
+    - lots of chests
+    - lockpicks
 - integrate stats more
     - sneakiness
-- gear (huge complexity feature):
-    - items
-    - inventory grid
-    - buttons (clickability)
-    - stat window
-
-
-Massive feature:
-- Side Menu, move down bottom menu
 
 Experimentables:
-- Other types of dungeon generation methods
+- Other types of dungeon generation methods (graph based, gotta play around)
+    - doors
+        * need to attach the corridor points to the room object? (hard to do with current thing)
 
 Futures/Features:
-- items
 - floors
-- skills
