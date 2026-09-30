@@ -3,8 +3,9 @@ import { pTimeout } from '../utils/timers.js'
 import { sub2d, add2d, eq2d, apply2d } from '../utils/vec2d.js'
 import { camera } from './camera.js'
 import { aStar } from './algorithms/astar.js'
-import { render } from './render.js'
+import { render, renderOverlay } from './render.js'
 import { isPointInRect } from '../utils/rectangle.js'
+import { equip, unequip } from './entities/gear.js'
 
 const inputToAction = (key) => {
     switch (key) {
@@ -77,12 +78,16 @@ export const mouseHandler = (turn, game) => async (e) => {
     }
 }
 
+let raf = 0
 export const mouseMoveHandler = (game) => (e) => {
-    if (game.heldItem !== null) {
-        const rect = game.canvas.canvas.getBoundingClientRect()
-        const mousePos = sub2d([e.clientX, e.clientY], [rect.left, rect.top])
-        game.mousePos = mousePos
-        render({ canvas: game.canvas, game })
+    if (!raf) {
+        raf = requestAnimationFrame(() => {
+            raf = 0
+            const rect = game.canvas.boundingClientRect
+            const mousePos = sub2d([e.clientX, e.clientY], [rect.left, rect.top])
+            game.mousePos = mousePos
+            renderOverlay(game, mousePos)
+        })
     }
 }
 
@@ -103,6 +108,7 @@ const handleInventoryClick = (game, mousePos) => {
             game.inventory[inventoryIndex] = null
             game.mousePos = mousePos
             render({ canvas: game.canvas, game })
+            game.canvas.drawOverlayTile(game.heldItem.item.tile, ...game.mousePos)
         }
     } else {
         if (item === null) {
@@ -118,6 +124,7 @@ const handleInventoryClick = (game, mousePos) => {
             game.inventory[inventoryIndex] = game.heldItem.item
             game.heldItem = { item: temp, from: null }
             render({ canvas: game.canvas, game })
+            game.canvas.drawOverlayTile(game.heldItem.item.tile, ...game.mousePos)
         }
     }
 }
@@ -127,12 +134,14 @@ const handleGearClick = (game, mousePos) => {
         for (const [gearType, gearSlotPos] of Object.entries(game.canvas.gearSlots)) {
             if (isPointInRect(mousePos, { x: gearSlotPos[0], y: gearSlotPos[1], w: game.canvas.ts, h: game.canvas.ts })) {
                 if (gearType.startsWith(game.heldItem.item.type)) {
-                    game.gear[gearType] = game.heldItem.item
+                    const item = game.heldItem.item
+                    equip(game, gearType, item)
                     if (game.inventory[game.heldItem.from]) {
                         game.inventory[game.heldItem.from] = null
                     }
                     game.heldItem = null
                     render({ canvas: game.canvas, game })
+    
                     return
                 }
             }
@@ -141,10 +150,12 @@ const handleGearClick = (game, mousePos) => {
         for (const [gearType, gearSlotPos] of Object.entries(game.canvas.gearSlots)) {
             if (isPointInRect(mousePos, { x: gearSlotPos[0], y: gearSlotPos[1], w: game.canvas.ts, h: game.canvas.ts })) {
                 if (game.gear[gearType]) {
-                    game.heldItem = { item: game.gear[gearType], from: null }
-                    game.gear[gearType] = null
+                    const item = game.gear[gearType]
+                    game.heldItem = { item, from: null }
+                    unequip(game, gearType, item)
                     game.mousePos = mousePos
                     render({ canvas: game.canvas, game })
+                    game.canvas.drawOverlayTile(game.heldItem.item.tile, ...game.mousePos)
                     return
                 }
             }
@@ -154,8 +165,8 @@ const handleGearClick = (game, mousePos) => {
 
 const handleGameWindowClick = async (turn, game, mousePos) => {
     const viewPortPos = game.canvas.getTilePosAt(...mousePos)
-    const { vx, vy } = camera(game.focusedEntity, game.world)
-    const worldPos = add2d([vx, vy], viewPortPos)
+    const viewPort = camera(game, game.focusedEntity, game.canvas.viewPortDims)
+    const worldPos = add2d([viewPort.x, viewPort.y], viewPortPos)
 
     // Pick Up Item
     for (const item of game.items) {

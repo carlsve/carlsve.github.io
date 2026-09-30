@@ -1,13 +1,98 @@
 import { sub2d, apply2d } from "../../utils/vec2d.js"
+import { damageTypes, MUNDANE, EXOTIC } from "./damageTypes.js"
 
 const MAX_DEPTH = 100
 
-function resolveMeleeDamage(entity) {
-    return 5 + entity.stats.secondary.meleePower()
+function resolveMeleeDamage(attacker, defender, modifiers = {}) {
+    // calculate attacker damages vs defender resistances
+    const mundane = {}
+    const exotic = {}
+    const logs = []
+    logs.push({modifiers: modifiers})
+    logs.push({initialAttackerDamages: {...attacker.stats.damages}})
+    logs.push({initialDefenderResistances: {...defender.stats.resistances}})
+    // calculate attackers damage
+    for (const damageType of Object.keys(damageTypes)) {
+        if (attacker.stats.damages[damageType] > 0) {
+            if (MUNDANE.includes(damageType)) {
+                mundane[damageType] = attacker.stats.damages[damageType]
+            } else if (EXOTIC.includes(damageType)) {
+                exotic[damageType] = attacker.stats.damages[damageType]
+            } else {
+                throw new Error(`Damage type: ${damageType} not supported!`)
+            }
+        }
+    }
+
+    logs.push({initialMundane: {...mundane}})
+    logs.push({initialExotic: {...exotic}})
+    
+    // Find dominant mundane damage to apply meleePower to, default to crushing
+    let maxMundaneType = ['crushing', 0]
+    for (const [mundaneType, value] of Object.entries(mundane)) {
+        if (value > maxMundaneType[1]) {
+            maxMundaneType = [mundaneType, value]
+        }
+    }
+    mundane[maxMundaneType[0]] = (mundane[maxMundaneType[0]] || 0) + attacker.stats.secondary.meleePower()
+    logs.push({mundaneAfterMeleePowerApplication: {...mundane}})
+
+    if (modifiers.critical) {
+        for (const damageType of Object.keys(mundane)) {
+            mundane[damageType] *= 2
+        }
+    }
+    logs.push({mundaneAfterCriticalApplication: {...mundane}})
+
+
+    
+    // Subtract Armour absorption
+    let armourAbsorption = defender.stats.secondary.armourAbsorption()
+    logs.push({defenderArmourAbsorption: armourAbsorption})
+    for (const damageType of MUNDANE) {
+        // First crushing, then slashing, then blasting, overflowing
+        if (Object.keys(mundane).includes(damageType)) {
+            let tempDmg = mundane[damageType]
+            mundane[damageType] = Math.max(mundane[damageType] - armourAbsorption, 0)
+            armourAbsorption = Math.max(armourAbsorption - tempDmg, 0)
+            
+            if (mundane[damageType] === 0) {
+                delete mundane[damageType]
+            }
+        }
+    }
+    logs.push({mundaneDamageAfterArmourAbsorption: {...mundane}})
+
+    // calculate defender resistances (Can get higher if defender has negative resistances)
+    for (const damageType of Object.keys(mundane)) {
+        mundane[damageType] = Math.max(mundane[damageType] - defender.stats.resistances[damageType], 0)
+        if (modifiers.block) {
+            // successful block flatly block 75% mundane damage and 50% exotic damage
+            mundane[damageType] = Math.ceil(mundane[damageType] * 0.25)
+        }
+    }
+    for (const damageType of Object.keys(exotic)) {
+        exotic[damageType] = Math.max(exotic[damageType] - defender.stats.resistances[damageType], 0)
+        if (modifiers.block) {
+            // successful block flatly block 75% mundane damage and 50% exotic damage
+            exotic[damageType] = Math.ceil(exotic[damageType] * 0.5)
+        }
+    }
+    logs.push({mundaneAfterResistances: {...mundane}})
+    logs.push({exoticAfterResistances: {...exotic}})
+
+    let finalDamage = 0
+    finalDamage += Object.values(mundane).reduce((s,v) => s + v,0)
+    logs.push({finalDamageAfterMundane: finalDamage})
+    finalDamage += Object.values(exotic).reduce((s,v) => s + v,0)
+    logs.push({finalDamageAfterExotic: finalDamage})
+
+    console.log(logs)
+    return finalDamage
 }
 
-function resolveRangeDamage(entity) {
-    return 3 + entity.stats.secondary.magicPower()
+function resolveRangeDamage(attacker, defender, modifiers = {}) {
+    return 3 + attacker.stats.secondary.magicPower() * (modifiers.critical ? 2 : 1)
 }
 
 export function melee(rng, attacker, defender, depth = 0) {
@@ -26,8 +111,8 @@ export function melee(rng, attacker, defender, depth = 0) {
 
     // crit chance roll on attacker
     if (roll(attacker.stats.secondary.criticalChance())) {
-        console.log(`${attacker.name} crits ${defender.name} for ${resolveMeleeDamage(attacker) * 2} life!`)
-        defender.stats.currentLife -= resolveMeleeDamage(attacker) * 2
+        console.log(`${attacker.name} crits ${defender.name} for ${resolveMeleeDamage(attacker, defender, {critical: true})} life!`)
+        defender.stats.currentLife -= resolveMeleeDamage(attacker, defender, {critical: true})
         return
     }
 
@@ -45,14 +130,14 @@ export function melee(rng, attacker, defender, depth = 0) {
     
     // block chance roll on defender
     if (roll(defender.stats.secondary.blockChance())) {
-        console.log(`${defender.name} successfully blocks attack from ${attacker.name}, for ${Math.floor(resolveMeleeDamage(attacker) / 4)} life!`)
+        console.log(`${defender.name} successfully blocks attack from ${attacker.name}, for ${Math.floor(resolveMeleeDamage(attacker, defender, {block: true}))} life!`)
         // successful block flatly block 75% normal damage
-        defender.stats.currentLife -= Math.floor(resolveMeleeDamage(attacker) / 4)
+        defender.stats.currentLife -= Math.floor(resolveMeleeDamage(attacker, defender, {block: true}))
         return
     }
 
-    console.log(`${attacker.name} hits ${defender.name} for ${resolveMeleeDamage(attacker)} life!`)
-    defender.stats.currentLife -= resolveMeleeDamage(attacker)
+    console.log(`${attacker.name} hits ${defender.name} for ${resolveMeleeDamage(attacker, defender)} life!`)
+    defender.stats.currentLife -= resolveMeleeDamage(attacker, defender)
 }
 
 export function range(rng, attacker, defender, depth = 0) {
@@ -71,8 +156,8 @@ export function range(rng, attacker, defender, depth = 0) {
 
     // crit chance roll on attacker
     if (roll(attacker.stats.secondary.criticalChance())) {
-        console.log(`${attacker.name} crits ${defender.name} for ${resolveRangeDamage(attacker) * 2} life!`)
-        defender.stats.currentLife -= resolveRangeDamage(attacker) * 2
+        console.log(`${attacker.name} crits ${defender.name} for ${resolveRangeDamage(attacker, defender, {çritical: true})} life!`)
+        defender.stats.currentLife -= resolveRangeDamage(attacker, defender, {çritical: true})
         return
     }
 
@@ -92,12 +177,11 @@ export function range(rng, attacker, defender, depth = 0) {
     
     // block chance roll on defender
     if (roll(defender.stats.secondary.blockChance())) {
-        console.log(`${defender.name} successfully blocks attack from ${attacker.name}, for ${Math.floor(resolveRangeDamage(attacker) / 4)} life!`)
-        // successful block flatly block 75% normal damage
-        defender.stats.currentLife -= Math.floor(resolveRangeDamage(attacker) / 4)
+        console.log(`${defender.name} successfully blocks attack from ${attacker.name}, for ${Math.floor(resolveRangeDamage(attacker, defender, {block: true}))} life!`)
+        defender.stats.currentLife -= Math.floor(resolveRangeDamage(attacker, defender, {block: true}))
         return
     }
 
-    console.log(`${attacker.name} hits ${defender.name} for ${resolveRangeDamage(attacker)} life!`)
-    defender.stats.currentLife -= resolveRangeDamage(attacker)    
+    console.log(`${attacker.name} hits ${defender.name} for ${resolveRangeDamage(attacker, defender)} life!`)
+    defender.stats.currentLife -= resolveRangeDamage(attacker, defender)    
 }

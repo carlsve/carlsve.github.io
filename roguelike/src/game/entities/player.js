@@ -12,7 +12,7 @@ export const getPlayer = (game, startPos) => {
         stats,
         skills,
         level: 1,
-        xp: 0
+        xp: 0,
     }
 
     player.getXP = (xp) => {

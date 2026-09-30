@@ -1,21 +1,22 @@
 import { camera } from "./camera.js"
-import { eq2d, mul2d, sub2d } from "../utils/vec2d.js"
+import { eq2d, mul2d, sub2d, add2d } from "../utils/vec2d.js"
 
 const dungeonTileOfIndex = ["floor", "wall", "stairs"]
 
 export const render = ({ canvas, game }) => {
     canvas.ctx.fillStyle = '#000000'
     canvas.ctx.fillRect(0, 0, canvas.gameWindowDims.w, canvas.gameWindowDims.h)
+    game.canvas.clearOverlay()
     const entity = game.focusedEntity
-    const {vx, vy, vw, vh} = camera(entity, game.world)
+    const viewPort = camera(game, entity, canvas.viewPortDims)
 
-    for (let y = 0; y < vh; y += 1) {
-        for (let x = 0; x < vw; x += 1) {
-            if (game.world.exploredAt(x + vx, y + vy)) {
-                if (game.visible.some((pos => eq2d(pos, [x + vx, y + vy])))) {
-                    canvas.drawTile(dungeonTileOfIndex[game.world.at(x + vx, y + vy)],x*canvas.ts,y*canvas.ts)
+    for (let y = 0; y < viewPort.h; y += 1) {
+        for (let x = 0; x < viewPort.w; x += 1) {
+            if (game.world.exploredAt(x + viewPort.x, y + viewPort.y)) {
+                if (game.visible.some((pos => eq2d(pos, [x + viewPort.x, y + viewPort.y])))) {
+                    canvas.drawTile(dungeonTileOfIndex[game.world.at(x + viewPort.x, y + viewPort.y)],x*canvas.ts,y*canvas.ts)
                 } else {
-                    canvas.drawFogTile(dungeonTileOfIndex[game.world.at(x + vx, y + vy)],x*canvas.ts,y*canvas.ts)
+                    canvas.drawFogTile(dungeonTileOfIndex[game.world.at(x + viewPort.x, y + viewPort.y)],x*canvas.ts,y*canvas.ts)
                 }
             }
         }
@@ -23,15 +24,15 @@ export const render = ({ canvas, game }) => {
 
     for (const item of game.items) {
         if (game.visible.some((pos => eq2d(pos, item.pos)))) {
-            canvas.drawTile(item.tile, ...mul2d(canvas.ts, sub2d(item.pos, [vx, vy])))
+            canvas.drawTile(item.tile, ...mul2d(canvas.ts, sub2d(item.pos, [viewPort.x, viewPort.y])))
         }
     }
 
-    canvas.drawTile('player', ...mul2d(canvas.ts, sub2d(game.player.pos, [vx, vy])))
+    canvas.drawTile('player', ...mul2d(canvas.ts, sub2d(game.player.pos, [viewPort.x, viewPort.y])))
 
     for (const enemy of game.enemies) {
         if (game.visible.some((pos => eq2d(pos, enemy.pos)))) {
-            const [enemyCameraX, enemyCameraY] = sub2d(enemy.pos, [vx, vy])
+            const [enemyCameraX, enemyCameraY] = sub2d(enemy.pos, [viewPort.x, viewPort.y])
             canvas.drawTile('enemy', enemyCameraX * canvas.ts, enemyCameraY * canvas.ts)
 
             // Enemy HP Bar
@@ -52,48 +53,50 @@ export const render = ({ canvas, game }) => {
     renderMinimap(canvas, game)
     renderBottomHUD(canvas, game)
     renderRightSideHUD(canvas, game)
-
-    if (game.heldItem && game.mousePos) {
-        canvas.drawTile(game.heldItem.item.tile, ...game.mousePos)
-    }
+    renderOverlay(game, game.mousePos)
 }
 
 const renderMinimap = (canvas, game) => {
     canvas.ctx.globalAlpha = 0.6
-    const ts = 2
-    const [w, h] = mul2d(ts, game.world.dims)
-    const ox = canvas.gameWindowDims.w - w - ts
-    const oy = ts
+    const minimapWindowDims = canvas.minimapWindowDims
+    const ts = canvas.minimapTs
     canvas.ctx.fillStyle = '#FFFFFF'
-    canvas.ctx.fillRect(ox - 1, oy - 1, w + 2, h + 2)
+    canvas.ctx.fillRect(minimapWindowDims.x, minimapWindowDims.y, minimapWindowDims.w, minimapWindowDims.h)
     canvas.ctx.fillStyle = '#000000'
-    canvas.ctx.fillRect(ox, oy, w, h)
-
-    for (let y = 0; y < game.world.dims[1]; y += 1) {
-        for (let x = 0; x < game.world.dims[0]; x += 1) {
-            if (game.world.at(x, y) === 0) {
-                canvas.ctx.fillStyle = '#cccccc'
-                canvas.ctx.fillRect(ox + x*ts, oy + y*ts, ts, ts)
+    canvas.ctx.fillRect(minimapWindowDims.x + 1, minimapWindowDims.y + 1, minimapWindowDims.w - 2, minimapWindowDims.h - 2)
+    const minimapDims = canvas.minimapDims
+    const minimapViewPort = camera(game, game.focusedEntity, minimapDims)
+    canvas.ctx.fillStyle = '#cccccc'
+    for (let y = 0; y < minimapViewPort.h; y += 1) {
+        for (let x = 0; x < minimapViewPort.w; x += 1) {
+            if (game.world.exploredAt(x + minimapViewPort.x, y + minimapViewPort.y)) {
+                canvas.ctx.fillRect(minimapWindowDims.x + x*ts,minimapWindowDims.y + y*ts, ts, ts)
             }
         }
     }
-
+    
     canvas.ctx.fillStyle = '#00FF00'
     for (const item of game.items) {
-        canvas.ctx.fillRect(ox + item.pos[0]*ts, oy + item.pos[1]*ts, ts, ts)
+        if (game.visible.some(pos => eq2d(pos, item.pos))) {
+            const itemMinimapPos = mul2d(ts, sub2d(item.pos, [minimapViewPort.x, minimapViewPort.y]))
+            canvas.ctx.fillRect(...add2d([minimapWindowDims.x, minimapWindowDims.y], itemMinimapPos), ts, ts)
+        }
     }
 
     canvas.ctx.fillStyle = '#FF0000'
     for (const enemy of game.enemies) {
-        if (true || game.visible.some((pos => eq2d(pos, enemy.pos)))) {
-            canvas.ctx.fillRect(ox + enemy.pos[0]*ts, oy + enemy.pos[1]*ts, ts, ts)
+        if (game.visible.some((pos => eq2d(pos, enemy.pos)))) {
+            const enemyMinimapPos = mul2d(ts, sub2d(enemy.pos, [minimapViewPort.x, minimapViewPort.y]))
+            canvas.ctx.fillRect(...add2d([minimapWindowDims.x, minimapWindowDims.y], enemyMinimapPos), ts, ts)
         }
     }
     
     canvas.ctx.fillStyle = '#0000FF'
-    canvas.ctx.fillRect(ox + game.player.pos[0] * ts, oy + game.player.pos[1] * ts, ts, ts)
-    
-    canvas.ctx.globalAlpha = 1
+    const playerMinimapPos = mul2d(ts, sub2d(game.player.pos, [minimapViewPort.x, minimapViewPort.y]))
+    canvas.ctx.fillRect(...add2d([minimapWindowDims.x, minimapWindowDims.y], playerMinimapPos), ts, ts)
+
+    canvas.ctx.globalAlpha = 1.0
+
 }
 
 const renderBottomHUD = (canvas, game) => {
@@ -155,6 +158,26 @@ const renderRightSideHUD = (canvas, game) => {
         canvas.drawText("#FFFFFF",`${stat}: ${value()}`, hudDims.x + 140, hudDims.y + 24 + i*14, {align: 'left', style: '12px'})
     }
 
+    // Damage Types Section
+    canvas.drawText("#FFFFFF",`Damage Types`, hudDims.x + 10, hudDims.y + 130, {align: 'left', style: '12px'})
+    const damages = Object.entries(game.player.stats.damages || {})
+    for (let i = 0; i < damages.length; i += 1) {
+        const [stat, value] = damages[i]
+        if (value > 0) {
+            canvas.drawText("#FFFFFF",`${stat}: ${value}`, hudDims.x + 10, hudDims.y + 144 + i*14, {align: 'left', style: '12px'})
+        }
+    }
+    
+    // Resistance Types Section
+    canvas.drawText("#FFFFFF",`Resistance Types`, hudDims.x + 140, hudDims.y + 300, {align: 'left', style: '12px'})
+    const resistances = Object.entries(game.player.stats.resistances || {})
+    for (let i = 0; i < resistances.length; i += 1) {
+        const [stat, value] = resistances[i]
+        if (value > 0) {
+            canvas.drawText("#FFFFFF",`${stat}: ${value}`, hudDims.x + 140, hudDims.y + 314 + i*14, {align: 'left', style: '12px'})
+        }
+    }
+
     // Inventory Frame
     const inventoryDims = canvas.inventoryDims
     canvas.ctx.fillStyle = '#444444'
@@ -177,5 +200,12 @@ const renderRightSideHUD = (canvas, game) => {
     canvas.ctx.fillRect(gearDims.x, gearDims.y, gearDims.w, gearDims.h)
     for (const [gearType, gearPos] of Object.entries(canvas.gearSlots)) {
         canvas.drawTile((game.gear[gearType] && game.gear[gearType].tile) || 'emptyInventorySlot', ...gearPos)
+    }
+}
+
+export const renderOverlay = (game, mousePos) => {
+    if (game.heldItem !== null) {
+        game.canvas.clearOverlay()
+        game.canvas.drawOverlayTile(game.heldItem.item.tile, ...mousePos)
     }
 }

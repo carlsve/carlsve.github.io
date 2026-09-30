@@ -1,18 +1,26 @@
 Definitives:
-- gear (huge complexity feature):
-    - actual damage types and damage calculations
-    - item info on hover
-- right mouse button
+- right mouse button (might be somewhat huge complexity)
     - consume consumables
     - equip equippables
     - shoot enemies
+        - thrown can be thrown
+        - arrows require crossbow
+        - spells are its own complete headache
+        - damage calculations for ranged!!!
+    - inventory slots
+- info on hover (minor complexity feature)
+    - item info
+    - enemy info
+- event system (huge feature):
+    - particle effects on overlay
+    - logging system
 - spells/abilities (huge feature)
     - spell/ability/consumable bar bottom HUD
     - click on inventory to move to bottom bar
     - select or 1..10 and shoot
     - assign spells to bottom bar (another tab, skill tab)
-- choosable skill trees (huge feature)
-- floors
+- choosable skills (huge feature)
+    - scene (start game, select character, etc)
 - enemy types (huge feature)
     - minibosses
     - magic casters
@@ -33,3 +41,10 @@ Experimentables:
 
 Futures/Features:
 - floors
+- map view (entire dungeon map)
+    - requires tabs
+
+Bugs
+- enemies spawning on top of players
+- enemies spawning on top of enemies
+- items spawning on top of items (is fine?)

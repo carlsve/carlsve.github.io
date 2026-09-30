@@ -32,8 +32,8 @@ export const initGame = (canvas, rng, onDeath) => {
         mousePos: null,
     }
 
-    game.inventory[0] = { tile: 'sword', name: 'wooden sword', type: 'weapon', stats: { damage: [{type: 'crushing', amount: 2}], }}
-    game.inventory[1] = { tile: 'helmet', name: 'wooden helmet', type: 'helmet', stats: { armour: [{type: 'crushing', amount: 2}], secondary: {armourAbsorption: 3}, }}
+    game.inventory[0] = { tile: 'sword', name: 'wooden sword', type: 'weapon', stats: { damages: { crushing: 2}, secondary: {criticalChance: 2} }}
+    game.inventory[1] = { tile: 'helmet', name: 'wooden helmet', type: 'helmet', stats: { resistances: {crushing: 2}, secondary: {armourAbsorption: 3}, }}
     game.inventory[2] = { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } }
 
     game.rng = rng
