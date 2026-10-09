@@ -21,6 +21,7 @@ export const initTurn = (game, onDeath, canvas) => ({ action, ...payload }) =>  
         case 'attackRange':
         case 'consume':
         case 'useItemQuickBar':
+        case 'useItemInventory':
             spent = game.player.perform({ action, ...payload })
             break
         default:

@@ -122,7 +122,7 @@ const renderBottomHUD = (canvas, game) => {
     }
 
     // Selected Slot
-    canvas.drawTile(game.selectedSlot !== null ? game.selectedSlot.tile : 'emptySlot', canvas.selectedSlot.x, canvas.selectedSlot.y)
+    canvas.drawTile(game.player.selectedSlot !== null ? game.player.selectedSlot.tile : 'emptySlot', canvas.selectedSlot.x, canvas.selectedSlot.y)
 
     // HP Bar
     const hpBarDims = { x: hudDims.x + 10, y: hudDims.y + 70, w: 100, h: 20 }

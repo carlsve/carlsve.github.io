@@ -102,6 +102,10 @@ export const put = (game, location, item) => {
         case 'ground': {
             item.pos = location.pos
             game.items.push(item)
+
+            if (game.player.selectedSlot === item) {
+                game.player.selectedSlot = null
+            }
             return null
         }
         case 'itemQuickBar': {

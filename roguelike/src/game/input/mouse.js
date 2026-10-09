@@ -7,6 +7,7 @@ import { isPointInRect } from '../../utils/rectangle.js'
 import { SLOTS_FOR_TYPE } from '../gear.js'
 import { kinds } from '../inventory.js'
 import { walkTo } from '../autowalk.js'
+import { USABLE } from '../items.js'
 
 export const mouseHandler = (turn, game) => async (e) => {
     const rect = game.canvas.boundingClientRect
@@ -50,6 +51,12 @@ export const mouseHandler = (turn, game) => async (e) => {
                     console.log(`item is adjacent: ${isAdjacentToPlayer}`)
                     if (isAdjacentToPlayer) {
                         if (game.downInput.shift) {
+                            if (USABLE.includes(item.type)) {
+                                const itemQuickBarIndex = game.findEmptyItemQuickBarIndex()
+                                if (itemQuickBarIndex !== -1) {
+                                    turn({ action: 'moveItem', from: kinds.GROUND(item.pos), to: kinds.ITEM_QUICK_BAR(itemQuickBarIndex) })
+                                }
+                            }
                             const inventoryIndex = game.findEmptyInventoryIndex()
                             if (inventoryIndex !== -1) {
                                 turn({ action: 'moveItem', from: kinds.GROUND(item.pos), to: kinds.INVENTORY(inventoryIndex) })
@@ -123,7 +130,7 @@ export const mouseHandler = (turn, game) => async (e) => {
                 turn({ action: 'moveItem', from: kinds.ITEM_QUICK_BAR(itemQuickBarIndex), to: kinds.HELD})
             }
         } else {
-            if (game.heldItem.item.type === 'consumable') {
+            if (USABLE.includes(game.heldItem.item.type)) {
                 turn({ action: 'moveItem', from: kinds.HELD, to: kinds.ITEM_QUICK_BAR(itemQuickBarIndex) })
             }
         }
@@ -160,8 +167,8 @@ export const rightClickHandler = (turn, game) => (e) => {
         const inventoryIndex = game.canvas.inventoryIndexAt(mousePos)
         const item = game.inventory[inventoryIndex]
         if (item !== null) {
-            if (item.type === 'consumable') {
-                turn({action: 'consume', index: inventoryIndex })
+            if (USABLE.includes(item.type)) {
+                turn({ action: 'useItemInventory', index: inventoryIndex })
             } else {
                 for (const slot of (SLOTS_FOR_TYPE[item.type] || [])) {
                     if (game.gear[slot] === null) {

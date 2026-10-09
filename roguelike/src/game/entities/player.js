@@ -1,7 +1,8 @@
 import { add2d, clamp2d, eq2d } from '../../utils/vec2d.js'
 import { hasLOS } from '../algorithms/hasLOS.js'
 import { effects } from '../effects.js'
-import { melee, range } from './combat.js'
+import { CONSUMABLE, SELECTABLE } from '../items.js'
+import { melee, rangeShoot, rangeThrow } from './combat.js'
 import { initSkills, initStats } from './stats.js'
 
 export const getPlayer = (game, startPos) => {
@@ -14,6 +15,7 @@ export const getPlayer = (game, startPos) => {
         skills,
         level: 1,
         xp: 0,
+        selectedSlot: null
     }
 
     player.getXP = (xp) => {
@@ -35,11 +37,13 @@ export const getPlayer = (game, startPos) => {
         if (type === 'melee') {
             melee(game.rng, player, enemy)
         } else {
-            if (player.stats.currentMana >= 5) {
-                range(game.rng, player, enemy)
-                player.stats.currentMana -= 5
-            } else {
-                console.log("Not enough mana!")
+            if (player.selectedSlot !== null) {
+                const item = player.selectedSlot
+                if (item.type === 'throwable') {
+                    rangeThrow(game.rng, player, enemy)
+                } else if (item.type === 'shootable' && game.gear.crossbow !== null) {
+                    rangeShoot(game.rng, player, enemy)
+                }
             }
         }
 
@@ -87,15 +91,17 @@ export const getPlayer = (game, startPos) => {
                 effects[item.effect](game)
                 return true
             }
+            case 'useItemInventory':
             case 'useItemQuickBar': {
-                const item = game.itemQuickBar[payload.index]
+                const from = action === 'useItemInventory' ? 'inventory' : 'itemQuickBar'
+                const item = game[from][payload.index]
                 if (item !== null) {
-                    if (item.type === 'consumable') {
-                        game.itemQuickBar[payload.index] = null
+                    if (CONSUMABLE.includes(item.type)) {
+                        game[from][payload.index] = null
                         effects[item.effect](game)
                         return true
-                    } else if (['throwable', 'shootable'].includes(item.type)) {
-                        game.selectedSlot = item
+                    } else if (SELECTABLE.includes(item.type)) {
+                        game.player.selectedSlot = item
                         return false
                     }
                 }

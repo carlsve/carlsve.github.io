@@ -1,14 +1,22 @@
 Definitives:
 - ranged
+    - stat change
+        - list of modifiers
+        - armour/jewellry applies to all
+        - crossbow only applies to range, 
+        - weapon1,2 only applies to melee,
+        - thrown takes meleePower (same calculation as in melee)
+    - damage types split (melee, gear)
     - thrown can be thrown, use melee mundane damage (? check)
     - arrows require crossbow, use ranged damage (? check)
     - damage calculations for ranged!!!
-    - ui mouse management: if selected item is dropped, it must be unselected
-    - selected slot should be on actor probably, can be reused for enemies when they use spells.
-    - ITEM MANAGEMENT
-        - current item state DOES NOT WORK!!!
-            - layer of indirection between items.
-            - STACKABLE ITEMS!!! (not all items can be stackable)
+- magic (extremely simple)
+    - spell in quickbar
+    - consumes mana
+    - sprite for a spell
+- item rework
+    - stackable items (only usable items should be stackable)
+    - possible rework, so items are not recreated every function call?
 - art assets
     - rudimentary player with transparency blocks
     - three different maces

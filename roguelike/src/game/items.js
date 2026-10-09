@@ -1,3 +1,7 @@
+export const CONSUMABLE = ['consumable']
+export const SELECTABLE = ['throwable', 'shootable']
+export const USABLE = [].concat(CONSUMABLE, SELECTABLE)
+
 export const makeItem = (type) => {
     const items = {
         sword: { tile: 'sword', name: 'wooden sword', type: 'weapon', stats: { damages: { crushing: 2 }, secondary: { criticalChance: 2 } } },

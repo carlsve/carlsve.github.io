@@ -91,8 +91,12 @@ function resolveMeleeDamage(attacker, defender, modifiers = {}) {
     return finalDamage
 }
 
-function resolveRangeDamage(attacker, defender, modifiers = {}) {
+function resolveShootDamage(attacker, defender, modifiers = {}) {
     return 3 + attacker.stats.secondary.magicPower() * (modifiers.critical ? 2 : 1)
+}
+
+function resolveThrowDamage(attacker, defender, modifiers = {}) {
+    return 38+ attacker.stats.secondary.magicPower() * (modifiers.critical ? 2 : 1)
 }
 
 export function melee(rng, attacker, defender, depth = 0) {
@@ -142,7 +146,7 @@ export function melee(rng, attacker, defender, depth = 0) {
     defender.stats.currentLife -= damage
 }
 
-export function range(rng, attacker, defender, depth = 0) {
+export function rangeShoot(rng, attacker, defender, depth = 0) {
     function roll(chance) {
         return (rng.random.next() * 100) <= chance
     }
@@ -158,8 +162,9 @@ export function range(rng, attacker, defender, depth = 0) {
 
     // crit chance roll on attacker
     if (roll(attacker.stats.secondary.criticalChance())) {
-        console.log(`${attacker.name} crits ${defender.name} for ${resolveRangeDamage(attacker, defender, {critical: true})} life!`)
-        defender.stats.currentLife -= resolveRangeDamage(attacker, defender, {critical: true})
+        const damage = resolveShootDamage(attacker, defender, {critical: true})
+        console.log(`${attacker.name} crits ${defender.name} for ${damage} life!`)
+        defender.stats.currentLife -= damage
         return
     }
 
@@ -179,11 +184,63 @@ export function range(rng, attacker, defender, depth = 0) {
     
     // block chance roll on defender
     if (roll(defender.stats.secondary.blockChance())) {
-        console.log(`${defender.name} successfully blocks attack from ${attacker.name}, for ${Math.floor(resolveRangeDamage(attacker, defender, {block: true}))} life!`)
-        defender.stats.currentLife -= Math.floor(resolveRangeDamage(attacker, defender, {block: true}))
+        const damage = Math.floor(resolveShootDamage(attacker, defender, {block: true}))
+        console.log(`${defender.name} successfully blocks attack from ${attacker.name}, for ${damage} life!`)
+        defender.stats.currentLife -= damage
         return
     }
 
-    console.log(`${attacker.name} hits ${defender.name} for ${resolveRangeDamage(attacker, defender)} life!`)
-    defender.stats.currentLife -= resolveRangeDamage(attacker, defender)    
+    const damage = resolveShootDamage(attacker, defender)
+    console.log(`${attacker.name} hits ${defender.name} for ${damage} life!`)
+    defender.stats.currentLife -= damage
+}
+
+
+export function rangeThrow(rng, attacker, defender, depth = 0) {
+    function roll(chance) {
+        return (rng.random.next() * 100) <= chance
+    }
+
+    if (attacker.stats.currentLife <= 0 || defender.stats.currentLife <= 0) {
+        return
+    }
+    if (depth > MAX_DEPTH) {
+        console.log("max counters reached, this shouldn't happen lol")
+        return
+    }
+
+
+    // crit chance roll on attacker
+    if (roll(attacker.stats.secondary.criticalChance())) {
+        const damage = resolveThrowDamage(attacker, defender, {critical: true})
+        console.log(`${attacker.name} crits ${defender.name} for ${damage} life!`)
+        defender.stats.currentLife -= damage
+        return
+    }
+
+    // dodge chance roll on defender
+    if (roll(defender.stats.secondary.dodgeChance() - attacker.stats.secondary.enemyDodgeReduction())) {
+        console.log(`${defender.name} successfully dodges attack from ${attacker.name}`)
+        return
+    }
+
+    // counter chance roll on defender can occur if you are adjacent to the enemy when shooting
+    const areAdjacent = apply2d(Math.abs, sub2d(attacker.pos, defender.pos)).reduce((x,y) => x + y, 0) === 1
+    console.log(`Attacker and defender adjacent = ${areAdjacent}`)
+    if (areAdjacent && roll(defender.stats.secondary.counterChance())) {
+        console.log(`${defender.name} counters attack from ${attacker.name}!`)
+        return melee(rng, defender, attacker, depth + 1)
+    }
+    
+    // block chance roll on defender
+    if (roll(defender.stats.secondary.blockChance())) {
+        const damage = Math.floor(resolveThrowDamage(attacker, defender, {block: true}))
+        console.log(`${defender.name} successfully blocks attack from ${attacker.name}, for ${damage} life!`)
+        defender.stats.currentLife -= damage
+        return
+    }
+
+    const damage = resolveThrowDamage(attacker, defender)
+    console.log(`${attacker.name} hits ${defender.name} for ${damage} life!`)
+    defender.stats.currentLife -= damage
 }
