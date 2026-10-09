@@ -1,3 +1,14 @@
+export const SLOTS_FOR_TYPE = {
+    weapon: ['weapon1', 'weapon2'],
+    ring: ['ring1', 'ring2'],
+    feet: ['feet'],
+    helmet: ['helmet'],
+    body: ['body'],
+    legs: ['legs'],
+    hands: ['hands'],
+    crossbow: ['crossbow'],
+}
+
 export const equip = (game, type, item) => {
     game.gear[type] = item
     for (const [stat, value] of Object.entries(item.stats.primary || {})) {

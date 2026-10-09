@@ -1,9 +1,11 @@
 import { camera } from "./camera.js"
 import { eq2d, mul2d, sub2d, add2d } from "../utils/vec2d.js"
+import { isPointInRect } from "../utils/rectangle.js"
 
 const dungeonTileOfIndex = ["floor", "wall", "stairs"]
 
-export const render = ({ canvas, game }) => {
+export const render = (game) => {
+    const canvas = game.canvas
     canvas.ctx.fillStyle = '#000000'
     canvas.ctx.fillRect(0, 0, canvas.gameWindowDims.w, canvas.gameWindowDims.h)
     game.canvas.clearOverlay()
@@ -101,38 +103,52 @@ const renderMinimap = (canvas, game) => {
 
 const renderBottomHUD = (canvas, game) => {
     const hudDims = canvas.bottomHUDDims
+    const margin = 5
 
     // Bottom Frame
     canvas.ctx.fillStyle = '#333333'
     canvas.ctx.fillRect(hudDims.x, hudDims.y, hudDims.w, hudDims.h)
 
+    // Item Quick Bar
+    const itemQuickBarDims = canvas.itemQuickBarDims
+    for (let y = 0; y < itemQuickBarDims.rows; y += 1) {
+        for (let x = 0; x < itemQuickBarDims.cols; x += 1) {
+            if (game.itemQuickBar[y * itemQuickBarDims.cols + x]) {
+                canvas.drawTile(game.itemQuickBar[y * itemQuickBarDims.cols + x].tile, itemQuickBarDims.x + x*canvas.ts, itemQuickBarDims.y + y*canvas.ts)
+            } else {
+                canvas.drawTile('emptySlot', itemQuickBarDims.x + x*canvas.ts, itemQuickBarDims.y + y*canvas.ts)
+            }
+        }
+    }
+
+    // Selected Slot
+    canvas.drawTile(game.selectedSlot !== null ? game.selectedSlot.tile : 'emptySlot', canvas.selectedSlot.x, canvas.selectedSlot.y)
+
     // HP Bar
-    canvas.ctx.fillStyle = '#FF0000'
-    canvas.ctx.fillRect(hudDims.x + 10, hudDims.y + 10, 100, 20)
-    canvas.ctx.fillStyle = '#000000'
-    canvas.ctx.fillRect(hudDims.x + 10 + 1, hudDims.y + 10 + 1, 100 - 2, 20 - 2)
-    canvas.ctx.fillStyle = '#FF0000'
-    canvas.ctx.fillRect(hudDims.x + 10 + 3, hudDims.y + 10 + 3, Math.max(0, Math.floor(100 * game.player.stats.currentLife/game.player.stats.secondary.life()) - 6), 20 - 6)
-    canvas.drawText("#FF0000", game.player.stats.currentLife, hudDims.x + 10 + 100 + 20, hudDims.y + 10 + 10)
+    const hpBarDims = { x: hudDims.x + 10, y: hudDims.y + 70, w: 100, h: 20 }
+    renderBar(canvas, hpBarDims, game.player.stats.secondary.life(), game.player.stats.currentLife, '#FF0000')
+    canvas.drawText("#FF0000", game.player.stats.currentLife, hpBarDims.x + hpBarDims.w + margin, hpBarDims.y + Math.floor(hpBarDims.h/2), { align: 'left' })
 
     // Mana Bar
-    canvas.ctx.fillStyle = '#0000FF'
-    canvas.ctx.fillRect(hudDims.x + 10, hudDims.y + 40, 100, 20)
-    canvas.ctx.fillStyle = '#000000'
-    canvas.ctx.fillRect(hudDims.x + 10 + 1, hudDims.y + 40 + 1, 100 - 2, 20 - 2)
-    canvas.ctx.fillStyle = '#0000FF'
-    canvas.ctx.fillRect(hudDims.x + 10 + 3, hudDims.y + 40 + 3, Math.max(0, Math.floor(100 * game.player.stats.currentMana/game.player.stats.secondary.mana()) - 6), 20 - 6)
-    canvas.drawText("#0000FF", game.player.stats.currentMana, hudDims.x + 10 + 100 + 20, hudDims.y + 40 + 10)
+    const manaBarDims = { x: hudDims.x + 160, y: hudDims.y + 70, w: 100, h: 20 }
+    renderBar(canvas, manaBarDims, game.player.stats.secondary.mana(), game.player.stats.currentMana, '#5555FF')
+    canvas.drawText("#5555FF", game.player.stats.currentMana, manaBarDims.x + manaBarDims.w + margin, manaBarDims.y + Math.floor(manaBarDims.h/2), { align: 'left' })
+
 
     // XP Bar
-    canvas.ctx.fillStyle = '#FFFF00'
-    canvas.ctx.fillRect(hudDims.x + 200, hudDims.y + 10, 100, 20)
+    const xpBarDims = { x: hudDims.x + 320, y: hudDims.y + 70, w: 100, h: 20 }
+    renderBar(canvas, xpBarDims, game.player.level*125, game.player.xp, '#FFFF00')
+    canvas.drawText("#FFFF00", `${game.player.xp}/${game.player.level * 125}`, xpBarDims.x + xpBarDims.w + margin, xpBarDims.y + Math.floor(xpBarDims.h/2), { align: 'left' })
+    canvas.drawText("#FFFF00", `${game.player.level}`, xpBarDims.x - margin, xpBarDims.y + Math.floor(xpBarDims.h/2), { align: 'right' })
+}
+
+const renderBar = (canvas, {x,y,w,h}, max, current, color) => {
+    canvas.ctx.fillStyle = color
+    canvas.ctx.fillRect(x, y, w, h)
     canvas.ctx.fillStyle = '#000000'
-    canvas.ctx.fillRect(hudDims.x + 200 + 1, hudDims.y + 10 + 1, 100 - 2, 20 - 2)
-    canvas.ctx.fillStyle = '#FFFF00'
-    canvas.ctx.fillRect(hudDims.x + 200 + 3, hudDims.y + 10 + 3, Math.max(0, Math.floor(100 * game.player.xp/(game.player.level*125)) - 6), 20 - 6)
-    canvas.drawText("#FFFF00", `${game.player.xp} / ${game.player.level * 125}`, hudDims.x + 200 + 100 + 40, hudDims.y + 10 + 10)
-    canvas.drawText("#FFFF00", `Level: ${game.player.level}`, hudDims.x + 200 + 50, hudDims.y + 40 + 10)
+    canvas.ctx.fillRect(x + 1, y + 1, w - 2, h - 2)
+    canvas.ctx.fillStyle = color
+    canvas.ctx.fillRect(x + 3, y + 3, Math.max(0, Math.floor(w * current/max) - 6), h - 6)
 }
 
 const renderRightSideHUD = (canvas, game) => {
@@ -178,18 +194,15 @@ const renderRightSideHUD = (canvas, game) => {
         }
     }
 
-    // Inventory Frame
-    const inventoryDims = canvas.inventoryDims
-    canvas.ctx.fillStyle = '#444444'
-    canvas.ctx.fillRect(inventoryDims.x, inventoryDims.y, inventoryDims.w, inventoryDims.h)
     
     // Inventory Grid
+    const inventoryDims = canvas.inventoryDims
     for (let y = 0; y < inventoryDims.rows; y += 1) {
         for (let x = 0; x < inventoryDims.cols; x += 1) {
             if (game.inventory[y * inventoryDims.cols + x]) {
                 canvas.drawTile(game.inventory[y * 10 + x].tile, inventoryDims.x + x*canvas.ts, inventoryDims.y + y*canvas.ts)
             } else {
-                canvas.drawTile('emptyInventorySlot', inventoryDims.x + x*canvas.ts, inventoryDims.y + y*canvas.ts)
+                canvas.drawTile('emptySlot', inventoryDims.x + x*canvas.ts, inventoryDims.y + y*canvas.ts)
             }
         }
     }
@@ -199,13 +212,25 @@ const renderRightSideHUD = (canvas, game) => {
     canvas.ctx.fillStyle = '#444444'
     canvas.ctx.fillRect(gearDims.x, gearDims.y, gearDims.w, gearDims.h)
     for (const [gearType, gearPos] of Object.entries(canvas.gearSlots)) {
-        canvas.drawTile((game.gear[gearType] && game.gear[gearType].tile) || 'emptyInventorySlot', ...gearPos)
+        canvas.drawTile((game.gear[gearType] && game.gear[gearType].tile) || 'emptySlot', ...gearPos)
     }
 }
 
 export const renderOverlay = (game, mousePos) => {
+    game.canvas.clearOverlay()
     if (game.heldItem !== null) {
-        game.canvas.clearOverlay()
         game.canvas.drawOverlayTile(game.heldItem.item.tile, ...mousePos)
+        return
+    }
+
+    if (isPointInRect(mousePos, game.canvas.inventoryDims)) {
+        const inventoryIndex = game.canvas.inventoryIndexAt(mousePos)
+
+        if (game.inventory[inventoryIndex] !== null) {
+            game.canvas.overlayCtx.fillStyle = '#FFFFFF'
+            game.canvas.overlayCtx.fillRect(...mousePos, 50, 50)
+            game.canvas.overlayCtx.fillStyle = '#000000'
+            game.canvas.overlayCtx.fillRect(...add2d([1,1],mousePos), 50 - 2, 50 - 2)
+        }
     }
 }

@@ -1,18 +1,53 @@
 Definitives:
-- right mouse button (might be somewhat huge complexity)
-    - consume consumables
-    - equip equippables
-    - shoot enemies
-        - thrown can be thrown
-        - arrows require crossbow
-        - spells are its own complete headache
-        - damage calculations for ranged!!!
-    - inventory slots
+- ranged
+    - thrown can be thrown, use melee mundane damage (? check)
+    - arrows require crossbow, use ranged damage (? check)
+    - damage calculations for ranged!!!
+    - ui mouse management: if selected item is dropped, it must be unselected
+    - selected slot should be on actor probably, can be reused for enemies when they use spells.
+    - ITEM MANAGEMENT
+        - current item state DOES NOT WORK!!!
+            - layer of indirection between items.
+            - STACKABLE ITEMS!!! (not all items can be stackable)
+- art assets
+    - rudimentary player with transparency blocks
+    - three different maces
+    - three different swords
+    - three different axes
+    - three different helmets
+    - three different bodies
+    - three different legs
+    - three different boots
+    - three different gloves
+    - four different rings
+    - three different arrows
+    - 8 different monsters
+- proper monsters
+    - blobby: 2 warrior, 2 acid dmg, 3 acid resist, 1 crushing dmg, 2 piercing resist, -5 counter chance, 9 dodge chance
+    - diggle: 3 warrior, 2 piercing, 1 slashing, -10 counter chance, 4 dodge, -2 life
+    - sickly diggle: 1 piercing, 1 slashing, 2 toxic dmg, 2 toxic resist, -5 counter, 4 dodge, -4 life,
+        20% chance of Diggle Flu on hit: (44 turns: -1 burliness, -1 sagacity, -1 nimbleness, -2 life)
+    - siegfried: 3 warrioe, 2 piercing dmg, 1 slashing dmg, -10 counter, 4 dodge, 20 life (50 xp, boss monster)
+    - lil batty: 3 rogue, 1 piercing, 2 slashing, -1 blasting resist, -1 crushing resist, -1 slashing resist, 15 dodge, -4 life
+    - evil magic potato: 1 warrior, 1 wizard, 2 asphyxiative, 1 crushing, different ai (not running immediately at you)
+        15% chance of weak aethereal missile when aware: ((3 + 0.1*magic power) aethereal, 2 blasting dmg, can dmg self)
+    - gnome 1 rogue, 2 wizard, 1 crushing dmg.
+        lesser targeted mana drain when aware: (0.25 * mana)
+        monster blink when aware: (random teleport)
+        easy target curse when aware: (buff for 1 hits), -15 dodge
+        HOW OFTEN DOES THIS GNOME CAST???
+    - common cave raven: 2 rogue, 1 piercing, 1 slashing, 2 necro resist, 20 dodge chance, -2 life
+    - amazonian bumblebeeperson: 2 warrior, 1 wizard, 1 slashing dmg, 1 piercing dmg, 3 counter chance, 3 dodge, -1 armour absorption
+    - bee arthur: 3 warrior, 1 wuzard, 2 piercing, 2 slashing, 2 counter, 3 dodge, -1 armour absorption. (50 xp, boss monster)
+        50% chance of drop spear on death: 2 crushing, 4 piercing, 2 EDR, quality 3/10, polearm class weapon
+        25% chance to drop potion of replenishment: (26 life, 30 mana)
 - info on hover (minor complexity feature)
     - item info
     - enemy info
 - event system (huge feature):
     - particle effects on overlay
+        - should animate?
+            - should bus be blocking until finished emitting?
     - logging system
 - spells/abilities (huge feature)
     - spell/ability/consumable bar bottom HUD
@@ -33,6 +68,9 @@ Definitives:
     - lockpicks
 - integrate stats more
     - sneakiness
+- UI upgrade (huge feature)
+    - osrs like
+        - tabs on right hud
 
 Experimentables:
 - Other types of dungeon generation methods (graph based, gotta play around)

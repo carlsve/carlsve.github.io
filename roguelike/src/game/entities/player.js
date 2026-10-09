@@ -1,5 +1,6 @@
 import { add2d, clamp2d, eq2d } from '../../utils/vec2d.js'
 import { hasLOS } from '../algorithms/hasLOS.js'
+import { effects } from '../effects.js'
 import { melee, range } from './combat.js'
 import { initSkills, initStats } from './stats.js'
 
@@ -80,19 +81,25 @@ export const getPlayer = (game, startPos) => {
                 }
                 return false
             }
-            case 'drop': {
-                if (game.world.at(...payload.dropAt) === 0 && !game.enemies.some(enemy => eq2d(enemy.pos, payload.dropAt))) {
-                    game.heldItem.item.pos = payload.dropAt
-                    game.items.push(game.heldItem.item)
-                    game.heldItem = null
-                    return true
+            case 'consume': {
+                const item = game.inventory[payload.inventoryIndex]
+                game.inventory[payload.inventoryIndex] = null
+                effects[item.effect](game)
+                return true
+            }
+            case 'useItemQuickBar': {
+                const item = game.itemQuickBar[payload.index]
+                if (item !== null) {
+                    if (item.type === 'consumable') {
+                        game.itemQuickBar[payload.index] = null
+                        effects[item.effect](game)
+                        return true
+                    } else if (['throwable', 'shootable'].includes(item.type)) {
+                        game.selectedSlot = item
+                        return false
+                    }
                 }
                 return false
-            }
-            case 'pickup': {
-                game.heldItem = {item: payload.item, from: null}
-                game.items = game.items.filter((groundItem) => groundItem !== payload.item)
-                return true
             }
             default:
                 throw new Error(`action "${action}" not implemented`)

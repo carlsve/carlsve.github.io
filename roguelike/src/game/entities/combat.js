@@ -111,8 +111,9 @@ export function melee(rng, attacker, defender, depth = 0) {
 
     // crit chance roll on attacker
     if (roll(attacker.stats.secondary.criticalChance())) {
-        console.log(`${attacker.name} crits ${defender.name} for ${resolveMeleeDamage(attacker, defender, {critical: true})} life!`)
-        defender.stats.currentLife -= resolveMeleeDamage(attacker, defender, {critical: true})
+        const damage = resolveMeleeDamage(attacker, defender, {critical: true})
+        console.log(`${attacker.name} crits ${defender.name} for ${damage} life!`)
+        defender.stats.currentLife -= damage
         return
     }
 
@@ -130,14 +131,15 @@ export function melee(rng, attacker, defender, depth = 0) {
     
     // block chance roll on defender
     if (roll(defender.stats.secondary.blockChance())) {
-        console.log(`${defender.name} successfully blocks attack from ${attacker.name}, for ${Math.floor(resolveMeleeDamage(attacker, defender, {block: true}))} life!`)
-        // successful block flatly block 75% normal damage
-        defender.stats.currentLife -= Math.floor(resolveMeleeDamage(attacker, defender, {block: true}))
+        const damage = resolveMeleeDamage(attacker, defender, { block: true })
+        console.log(`${defender.name} successfully blocks attack from ${attacker.name}, for ${damage} life!`)
+        defender.stats.currentLife -= damage
         return
     }
 
-    console.log(`${attacker.name} hits ${defender.name} for ${resolveMeleeDamage(attacker, defender)} life!`)
-    defender.stats.currentLife -= resolveMeleeDamage(attacker, defender)
+    const damage = resolveMeleeDamage(attacker, defender)
+    console.log(`${attacker.name} hits ${defender.name} for ${damage} life!`)
+    defender.stats.currentLife -= damage
 }
 
 export function range(rng, attacker, defender, depth = 0) {
@@ -156,8 +158,8 @@ export function range(rng, attacker, defender, depth = 0) {
 
     // crit chance roll on attacker
     if (roll(attacker.stats.secondary.criticalChance())) {
-        console.log(`${attacker.name} crits ${defender.name} for ${resolveRangeDamage(attacker, defender, {çritical: true})} life!`)
-        defender.stats.currentLife -= resolveRangeDamage(attacker, defender, {çritical: true})
+        console.log(`${attacker.name} crits ${defender.name} for ${resolveRangeDamage(attacker, defender, {critical: true})} life!`)
+        defender.stats.currentLife -= resolveRangeDamage(attacker, defender, {critical: true})
         return
     }
 

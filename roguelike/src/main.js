@@ -9,18 +9,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const sceneControl = {
         current: {
-            onKey: () => {},
+            onKeyDown: () => {},
+            onKeyUp: () => {},
             onMouse: () => {},
             onMouseMove: () => {},
+            onContextMenu: () => {},
         },
         setScene(scene) {
             this.current = scene
         }
     }
-    
-    document.addEventListener('keydown', (e) => sceneControl.current.onKey(e))
+
+    document.addEventListener('keydown', (e) => sceneControl.current.onKeyDown(e))
+    document.addEventListener('keyup', (e) => sceneControl.current.onKeyUp(e))
     canvas.canvas.addEventListener('click', (e) => sceneControl.current.onMouse(e))
     canvas.canvas.addEventListener('mousemove', (e) => sceneControl.current.onMouseMove(e))
+    canvas.canvas.addEventListener('contextmenu', (e) => sceneControl.current.onContextMenu(e))
     
     function go(name) {
         switch (name) {
