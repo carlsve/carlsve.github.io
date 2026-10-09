@@ -40,6 +40,8 @@ export const generateBSP = (world, { random, randInRange }) => {
                 const cY = Math.floor(y + h/2 - bsp.corridorWidth/2)
                 const cW = Math.floor(w/2)
                 const cH = Math.floor(bsp.corridorWidth)
+                world.corridors.push({x:cX, y:cY, w:cW, h:cH})
+
                 for (let i = 0; i < cH; i += 1) {
                     for (let j = 0; j < cW; j += 1) {
                         world.set(cX + j, cY + i, 0)
@@ -60,6 +62,8 @@ export const generateBSP = (world, { random, randInRange }) => {
                 const cY = Math.floor(y + splitAt/2)
                 const cW = Math.floor(bsp.corridorWidth)
                 const cH = Math.floor(h/2)
+                world.corridors.push({x:cX, y:cY, w:cW, h:cH})
+
                 for (let i = 0; i < cH; i += 1) {
                     for (let j = 0; j < cW; j += 1) {
                         world.set(cX + j, cY + i, 0)

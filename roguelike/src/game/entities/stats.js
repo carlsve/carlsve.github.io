@@ -1,3 +1,5 @@
+import { damageTypes } from "./damageTypes.js"
+
 export const initSkills = (_skills, stats) => {
     const skills = {
         warrior: 0,
@@ -43,7 +45,41 @@ export const initSkills = (_skills, stats) => {
     return skills
 }
 
-export const initStats = (_primary = {}, _secondary = {}) => {
+export const initStats = (_primary = {}, _secondary = {}, _damages = {}, _resistances = {}) => {
+    const statDump = {
+        secondary: {
+            meleePower: 0,
+            criticalChance: 0,
+            counterChance: 0,
+            magicPower: 0,
+            haywire: 0,
+            magicResistance: 0,
+            armourAbsorption: 0,
+            blockChance: 0,
+            dodgeChance: 0,
+            enemyDodgeReduction: 0,
+            sneakiness: 0,
+            visualSightRadius: 0,
+            trapSightRadius: 0,
+            trapAffinity: 0,
+            life: 0,
+            lifeRegen: 0,
+            mana: 0,
+            manaRegen: 0,
+            magicReflect: 0,
+            ..._secondary,
+        },
+        primary: {
+            burliness: 0,
+            sagacity: 0,
+            nimbleness: 0,
+            caddishness: 0,
+            savvy: 0,
+            stubborness: 0,
+            ..._primary,
+        },
+    }
+
     const primary = {
         burliness: 0,
         sagacity: 0,
@@ -51,36 +87,41 @@ export const initStats = (_primary = {}, _secondary = {}) => {
         caddishness: 0,
         savvy: 0,
         stubborness: 0,
-        ..._primary
     }
 
     const secondary = {
-        meleePower: () => _secondary.meleePower || (Math.floor((primary.burliness - 5)/3)),
-        criticalChance: () => _secondary.criticalChance || (Math.floor(primary.caddishness / 2)),
-        counterChance: () => _secondary.counterChance || (Math.floor((primary.nimbleness + primary.caddishness) / 6)),
-        magicPower: () => _secondary.magicPower || (Math.floor(primary.sagacity / 2)),
-        haywire: () => _secondary.haywire || (Math.floor(primary.savvy / 2)),
-        magicResistance: () => _secondary.magicResistance || (Math.floor(primary.stubborness / 2)),
-        armourAbsorption: () => _secondary.armourAbsorption || (0),
-        blockChance: () => _secondary.blockChance || (Math.floor((primary.burliness + primary.stubborness) / 6)),
-        dodgeChance: () => _secondary.dodgeChance || (Math.floor(primary.nimbleness / 2)),
-        enemyDodgeReduction: () => _secondary.enemyDodgeReduction || (Math.floor(primary.nimbleness / 3)),
-        sneakiness: () => _secondary.sneakiness || (Math.max(Math.floor(3/4 * (primary.nimbleness + primary.savvy)) - 20, 0)),
-        visualSightRadius: () => _secondary.visualSightRadius || (1),
-        trapSightRadius: () => _secondary.trapSightRadius || (1),
-        trapAffinity: () => _secondary.trapAffinity || (0),
-        life: () => _secondary.life || (primary.burliness + primary.caddishness + 5),
-        lifeRegen: () => _secondary.lifeRegen || (0),
-        mana: () => _secondary.mana || (primary.sagacity * 2 + 5),
-        manaRegen: () => _secondary.manaRegen || (0),
-        magicReflect: () => _secondary.magicReflect || (0),
+        meleePower: () => statDump.secondary.meleePower + (Math.floor(((statDump.primary.burliness + primary.burliness) - 5)/3)),
+        criticalChance: () => statDump.secondary.criticalChance + (Math.floor((statDump.primary.caddishness + primary.caddishness) / 2)),
+        counterChance: () => statDump.secondary.counterChance + (Math.floor(((statDump.primary.nimbleness + primary.nimbleness) + (statDump.primary.caddishness + primary.caddishness)) / 6)),
+        magicPower: () => statDump.secondary.magicPower + (Math.floor((statDump.primary.sagacity + primary.sagacity) / 2)),
+        haywire: () => statDump.secondary.haywire + (Math.floor((statDump.primary.savvy + primary.savvy) / 2)),
+        magicResistance: () => statDump.secondary.magicResistance + (Math.floor((statDump.primary.stubborness + primary.stubborness) / 2)),
+        armourAbsorption: () => statDump.secondary.armourAbsorption + (0),
+        blockChance: () => statDump.secondary.blockChance + (Math.floor(((statDump.primary.burliness + primary.burliness) + (statDump.primary.stubborness + primary.stubborness)) / 6)),
+        dodgeChance: () => statDump.secondary.dodgeChance + (Math.floor((statDump.primary.nimbleness + primary.nimbleness) / 2)),
+        enemyDodgeReduction: () => statDump.secondary.enemyDodgeReduction + (Math.floor((statDump.primary.nimbleness + primary.nimbleness) / 3)),
+        sneakiness: () => statDump.secondary.sneakiness + (Math.max(Math.floor(3/4 * ((statDump.primary.nimbleness + primary.nimbleness) + (statDump.primary.savvy + primary.savvy))) - 20, 0)),
+        visualSightRadius: () => statDump.secondary.visualSightRadius + (1),
+        trapSightRadius: () => statDump.secondary.trapSightRadius + (1),
+        trapAffinity: () => statDump.secondary.trapAffinity + (0),
+        life: () => statDump.secondary.life + ((statDump.primary.burliness + primary.burliness) + (statDump.primary.caddishness + primary.caddishness) + 5),
+        lifeRegen: () => statDump.secondary.lifeRegen + (0),
+        mana: () => statDump.secondary.mana + ((statDump.primary.sagacity + primary.sagacity) * 2 + 5),
+        manaRegen: () => statDump.secondary.manaRegen + (0),
+        magicReflect: () => statDump.secondary.magicReflect + (0),
     }
+
+    const damages = Object.keys(damageTypes).reduce((obj, damageType) => ({...obj, [damageType]: _damages[damageType] || 0}), {})
+    const resistances = Object.keys(damageTypes).reduce((obj, damageType) => ({...obj, [damageType]: _resistances[damageType] || 0}), {})
 
     return {
         primary,
         secondary,
+        statDump,
+        damages,
+        resistances,
         currentLife: secondary.life(),
-        currentMana: secondary.mana()
+        currentMana: secondary.mana(),
     }
 }
 

@@ -2,10 +2,11 @@ import { add2d, clamp2d, eq2d, hypot2d, sub2d } from '../../utils/vec2d.js'
 import { hasLOS } from '../algorithms/hasLOS.js'
 import { nextPosTowardGoal } from '../algorithms/nextPosTowardsGoal.js'
 import { melee } from './combat.js'
+import { damageTypes } from './damageTypes.js'
 import { initSkills, initStats } from './stats.js'
 
 export const getEnemy = (game, startPos) => {
-    const stats = initStats()
+    const stats = initStats({}, {}, { [damageTypes.crushing]: 2 }, { [damageTypes.slashing]: 2 })
     const skills = initSkills({ warrior: 3, rogue: 1 }, stats)
     const enemy = {
         pos: startPos,

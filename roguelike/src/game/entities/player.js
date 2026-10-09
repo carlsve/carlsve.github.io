@@ -1,6 +1,8 @@
 import { add2d, clamp2d, eq2d } from '../../utils/vec2d.js'
 import { hasLOS } from '../algorithms/hasLOS.js'
-import { melee, range } from './combat.js'
+import { effects } from '../effects.js'
+import { CONSUMABLE, SELECTABLE } from '../items.js'
+import { melee, rangeShoot, rangeThrow } from './combat.js'
 import { initSkills, initStats } from './stats.js'
 
 export const getPlayer = (game, startPos) => {
@@ -12,7 +14,8 @@ export const getPlayer = (game, startPos) => {
         stats,
         skills,
         level: 1,
-        xp: 0
+        xp: 0,
+        selectedSlot: null
     }
 
     player.getXP = (xp) => {
@@ -34,11 +37,13 @@ export const getPlayer = (game, startPos) => {
         if (type === 'melee') {
             melee(game.rng, player, enemy)
         } else {
-            if (player.stats.currentMana >= 5) {
-                range(game.rng, player, enemy)
-                player.stats.currentMana -= 5
-            } else {
-                console.log("Not enough mana!")
+            if (player.selectedSlot !== null) {
+                const item = player.selectedSlot
+                if (item.type === 'throwable') {
+                    rangeThrow(game.rng, player, enemy)
+                } else if (item.type === 'shootable' && game.gear.crossbow !== null) {
+                    rangeShoot(game.rng, player, enemy)
+                }
             }
         }
 
@@ -80,19 +85,27 @@ export const getPlayer = (game, startPos) => {
                 }
                 return false
             }
-            case 'drop': {
-                if (game.world.at(...payload.dropAt) === 0 && !game.enemies.some(enemy => eq2d(enemy.pos, payload.dropAt))) {
-                    game.heldItem.item.pos = payload.dropAt
-                    game.items.push(game.heldItem.item)
-                    game.heldItem = null
-                    return true
+            case 'consume': {
+                const item = game.inventory[payload.inventoryIndex]
+                game.inventory[payload.inventoryIndex] = null
+                effects[item.effect](game)
+                return true
+            }
+            case 'useItemInventory':
+            case 'useItemQuickBar': {
+                const from = action === 'useItemInventory' ? 'inventory' : 'itemQuickBar'
+                const item = game[from][payload.index]
+                if (item !== null) {
+                    if (CONSUMABLE.includes(item.type)) {
+                        game[from][payload.index] = null
+                        effects[item.effect](game)
+                        return true
+                    } else if (SELECTABLE.includes(item.type)) {
+                        game.player.selectedSlot = item
+                        return false
+                    }
                 }
                 return false
-            }
-            case 'pickup': {
-                game.heldItem = {item: payload.item, from: null}
-                game.items = game.items.filter((groundItem) => groundItem !== payload.item)
-                return true
             }
             default:
                 throw new Error(`action "${action}" not implemented`)

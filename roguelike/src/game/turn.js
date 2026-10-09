@@ -1,31 +1,33 @@
 import { fov } from './algorithms/fov.js'
-import { printStats } from './entities/stats.js'
+import { moveItem } from './inventory.js'
 import { render } from './render.js'
 
+const moveItemCostsTime = (from, to) => from.kind === 'ground' || to.kind === 'ground'
+
 export const initTurn = (game, onDeath, canvas) => ({ action, ...payload }) =>  {
-    console.log(printStats(game.player.stats))
+    console.log(`Turn: ${JSON.stringify({ action, payload })}`)
     let spent = false
     switch(action) {
-        case 'step':
-            spent = game.player.perform({ action, ...payload })
+        case 'noop':
             break
         case 'wait':
             spent = true
             break
-        case 'range':
-            game.attackMode = game.attackMode === 'melee' ? 'range' : 'melee'
-            console.log(`Set attack mode to ${game.attackMode}`)
+        case 'moveItem':
+            const success = moveItem(game, payload.from, payload.to)
+            spent = success && moveItemCostsTime(payload.from, payload.to)
             break
+        case 'step':
         case 'attackRange':
+        case 'consume':
+        case 'useItemQuickBar':
+        case 'useItemInventory':
             spent = game.player.perform({ action, ...payload })
             break
-        case 'drop':
-            spent = game.player.perform({ action, ...payload })
-            break
-        case 'pickup':
-            spent = game.player.perform({ action, ...payload })
-            break
+        default:
+            throw new Error(`No action of type ${JSON.stringify({ action, payload })}`)
     }
+    console.log(`Turn was spent: ${spent}`)
     if (game.player.stats.currentLife <= 0) {
         onDeath()
         return
@@ -56,7 +58,6 @@ export const initTurn = (game, onDeath, canvas) => ({ action, ...payload }) =>  
         if (game.tick % manaRegenRate == 0) {
             game.player.stats.currentMana = Math.min(game.player.stats.currentMana + 1, game.player.stats.secondary.mana())
         }
-
-        render({ canvas, game })
     }
+    render(game)
 }

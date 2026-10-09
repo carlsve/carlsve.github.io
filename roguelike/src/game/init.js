@@ -1,17 +1,25 @@
-import { generateBSP } from './generation/bsp.js'
 import { getPlayer } from './entities/player.js'
-import { world } from './world.js'
-import { keyHandler, mouseHandler, mouseMoveHandler } from './input.js'
+import { getWorld } from './world.js'
+import { keyDownHandler, keyUpHandler, downInput } from './input/keys.js'
+import { mouseHandler, mouseMoveHandler, rightClickHandler } from './input/mouse.js'
 import { getEnemy } from './entities/enemy.js'
 import { initTurn } from './turn.js'
+import { makeItem } from './items.js'
+import { randomPointInRect } from '../utils/rectangle.js'
+import { eq2d } from '../utils/vec2d.js'
 
 export const initGame = (canvas, rng, onDeath) => {
+    const world = getWorld([80, 60])
+    world.generate(rng)
+
     const game = {
+        downInput,
         world,
         player: null,
+        enemies: [],
         focusedEntity: null,
-        canvas: null,
-        rng: null,
+        canvas,
+        rng: rng,
         tick: 0,
         walkId: 0,
         visible: [],
@@ -23,60 +31,62 @@ export const initGame = (canvas, rng, onDeath) => {
             weapon1: null,
             weapon2: null,
             legs: null,
-            boots: null,
+            feet: null,
             hands: null,
+            crossbow: null,
             ring1: null,
             ring2: null,
         },
         heldItem: null,
-        mousePos: null,
+        itemQuickBar: Array.from(Array(10), () => null),
+        items: [],
+        mousePos: [0,0],
     }
+    game.findEmptyInventoryIndex = () => game.inventory.findIndex(item => item === null)
+    game.findEmptyItemQuickBarIndex = () => game.itemQuickBar.findIndex(item => item === null)
 
-    game.inventory[0] = { tile: 'sword', name: 'wooden sword', type: 'weapon', stats: { damage: [{type: 'crushing', amount: 2}], }}
-    game.inventory[1] = { tile: 'helmet', name: 'wooden helmet', type: 'helmet', stats: { armour: [{type: 'crushing', amount: 2}], secondary: {armourAbsorption: 3}, }}
-    game.inventory[2] = { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } }
+    game.inventory[0] = makeItem('sword')
+    game.inventory[1] = makeItem('healthPotion')
+    game.inventory[2] = makeItem('crossbow')
+    game.inventory[3] = makeItem('arrows')
+    game.inventory[4] = makeItem('throwingStar')
+    game.inventory[5] = makeItem('healthPotion')
+    game.inventory[6] = makeItem('healthPotion')
+    game.inventory[7] = makeItem('healthPotion')
+    game.inventory[8] = makeItem('healthPotion')
+    game.inventory[9] = makeItem('healthPotion')
 
-    game.rng = rng
-    game.world.init([80, 60])
-    generateBSP(game.world, rng)
-    const spawnRoomIndex = rng.randInRange(0, game.world.rooms.length)
-    const spawnRoom = game.world.rooms[spawnRoomIndex]
-    const playerStartPos = [
-        rng.randInRange(spawnRoom.x, spawnRoom.x + spawnRoom.w),
-        rng.randInRange(spawnRoom.y, spawnRoom.y + spawnRoom.h),
-    ]
+    const playerStartPos = randomPointInRect(rng, world.getRandomRoom(rng))
     game.player = getPlayer(game, playerStartPos)
-    game.enemies = Array.from(Array(20), () => {
-        const spawnRoomIndex = rng.randInRange(0, game.world.rooms.length)
-        const spawnRoom = game.world.rooms[spawnRoomIndex]
-        const enemyStartPos = [
-            rng.randInRange(spawnRoom.x, spawnRoom.x + spawnRoom.w),
-            rng.randInRange(spawnRoom.y, spawnRoom.y + spawnRoom.h),
-        ]
-        return getEnemy(game, enemyStartPos)
+    game.enemies = Array.from(Array(15), () => {
+        let pos = randomPointInRect(rng, world.getRandomRoom(rng))
+        while (eq2d(game.player.pos, pos)) {
+            pos = randomPointInRect(rng, world.getRandomRoom(rng))
+        }
+        return getEnemy(game, pos)
     })
+
     game.items = [
-        { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } },
-        { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } },
-        { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } },
-        { tile: 'healthPotion', name: 'health potion', type: 'consumable', onConsume: () => { game.player.currentLife += 20 } },
+        makeItem('sword'),
+        makeItem('helmet'),
+        makeItem('healthPotion'),
+        makeItem('healthPotion'),
+        makeItem('healthPotion'),
+        makeItem('healthPotion'),
     ].map(item => {
-        const spawnRoomIndex = rng.randInRange(0, game.world.rooms.length)
-        const spawnRoom = game.world.rooms[spawnRoomIndex]
-        item.pos = [
-            rng.randInRange(spawnRoom.x, spawnRoom.x + spawnRoom.w),
-            rng.randInRange(spawnRoom.y, spawnRoom.y + spawnRoom.h),
-        ]
+        item.pos = randomPointInRect(rng, world.getRandomRoom(rng))
         return item
     })
     game.focusedEntity = game.player
-    game.canvas = canvas
     const turn = initTurn(game, onDeath, canvas)
-    game.onKey = keyHandler(turn)
+    game.onKeyDown = keyDownHandler(turn, game)
+    game.onKeyUp = keyUpHandler()
     game.onMouse = mouseHandler(turn, game)
     game.onMouseMove = mouseMoveHandler(game)
+    game.onContextMenu = rightClickHandler(turn, game)
 
     turn({ action: 'wait' })
 
+    window.game = game
     return game
 }

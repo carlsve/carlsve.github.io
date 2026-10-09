@@ -1,7 +1,10 @@
 export function initDeath(canvas, go) {
     const death = {
-        onKey: () => { go('play') },
-        onMouse: () => { go('play') }
+        onKeyDown: () => { go('play') },
+        onKeyUp: () => { go('play') },
+        onMouse: () => { go('play') },
+        onMouseMove: () => {},
+        onContextMenu: () => {},
     }
     canvas.ctx.fillStyle = '#000000'
     canvas.ctx.fillRect(0,0,canvas.canvas.width, canvas.canvas.height)
