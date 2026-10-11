@@ -1,4 +1,4 @@
-import { damageTypes } from "./damageTypes.js"
+import { damageTypes } from "./damage.js"
 
 export const initSkills = (_skills, stats) => {
     const skills = {
@@ -119,6 +119,7 @@ export const initStats = (_primary = {}, _secondary = {}, _damages = {}, _resist
         secondary,
         statDump,
         damages,
+        currentDamages: damages,
         resistances,
         currentLife: secondary.life(),
         currentMana: secondary.mana(),

@@ -21,6 +21,7 @@ location:
 
 import { eq2d } from "../utils/vec2d.js"
 import { equip, SLOTS_FOR_TYPE, unequip } from "./gear.js"
+import { USABLE } from "./items.js"
 
 export const kinds = {
     INVENTORY: (index) => ({ kind: 'inventory', index }),
@@ -28,6 +29,45 @@ export const kinds = {
     HELD: { kind: 'held' },
     GROUND: (pos) => ({ kind: 'ground', pos }),
     ITEM_QUICK_BAR: (index) => ({ kind: 'itemQuickBar', index }),
+}
+
+export const firstEmpty = (game, type) => {
+    switch (type) {
+        case 'itemQuickBar': return game.itemQuickBar.findIndex(item => item === null)
+        case 'inventory': return game.inventory.findIndex(item => item === null)
+        default: {
+            throw new Error(`Not possible to check empty for type ${type}`)
+        }
+    }
+}
+
+export const peek = (game, location) => {
+    switch (location.kind) {
+        case 'inventory': {
+            if (location.index < 0 || location.index >= game.inventory.length) {
+                throw new Error(`Bad inventory index: ${location.index}`)
+            }
+            return game.inventory[location.index]
+        }
+        case 'gear': {
+            return game.gear[location.slot]
+        }
+        case 'held': {
+            return game.heldItem
+        }
+        case 'ground': {
+            return game.items.find(_item => eq2d(_item.pos, location.pos)) || null
+        }
+        case 'itemQuickBar': {
+            if (location.index < 0 || location.index >= game.itemQuickBar.length) {
+                throw new Error(`Bad item quick bar index: ${location.index}`)
+            }
+            return game.itemQuickBar[location.index]
+        }
+        default: {
+            throw new Error(`No location of type: ${JSON.stringify(location)}`)
+        }
+    }
 }
 
 export const take = (game, location) => {
@@ -52,7 +92,7 @@ export const take = (game, location) => {
             if (game.heldItem === null) {
                 return null
             }
-            const item = game.heldItem.item
+            const item = game.heldItem
             game.heldItem = null
             return item
         }
@@ -96,7 +136,7 @@ export const put = (game, location, item) => {
             return displaced
         }
         case 'held': {
-            game.heldItem = { item }
+            game.heldItem = item
             return null
         }
         case 'ground': {
@@ -137,10 +177,7 @@ export const moveItem = (game, from, to) => {
     if (displaced !== null) {
         put(game, from, displaced)
     }
-    
-    if (from.kind === 'inventory' && to.kind === 'held') {
-        game.heldItem.from = from.index
-    }
+
     return true
 }
 
@@ -153,7 +190,7 @@ export const canPlace = (game, to, item) => {
             return true
         }
         case 'itemQuickBar': {
-            return true
+            return USABLE.includes(item.type)
         }
         case 'held': {
             return true

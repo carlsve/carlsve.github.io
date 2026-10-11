@@ -42,15 +42,13 @@ export const initGame = (canvas, rng, onDeath) => {
         items: [],
         mousePos: [0,0],
     }
-    game.findEmptyInventoryIndex = () => game.inventory.findIndex(item => item === null)
-    game.findEmptyItemQuickBarIndex = () => game.itemQuickBar.findIndex(item => item === null)
 
     game.inventory[0] = makeItem('sword')
     game.inventory[1] = makeItem('healthPotion')
     game.inventory[2] = makeItem('crossbow')
     game.inventory[3] = makeItem('arrows')
     game.inventory[4] = makeItem('throwingStar')
-    game.inventory[5] = makeItem('healthPotion')
+    game.inventory[5] = makeItem('sword2')
     game.inventory[6] = makeItem('healthPotion')
     game.inventory[7] = makeItem('healthPotion')
     game.inventory[8] = makeItem('healthPotion')

@@ -1,6 +1,7 @@
 import { camera } from "./camera.js"
 import { eq2d, mul2d, sub2d, add2d } from "../utils/vec2d.js"
 import { isPointInRect } from "../utils/rectangle.js"
+import { getDamages } from "./entities/damage.js"
 
 const dungeonTileOfIndex = ["floor", "wall", "stairs"]
 
@@ -163,7 +164,7 @@ const renderRightSideHUD = (canvas, game) => {
     canvas.drawText("#FFFFFF",`Primary Stats`, hudDims.x + 10, hudDims.y + 10, {align: 'left', style: '12px'})
     for (let i = 0; i < primaryStats.length; i += 1) {
         const [stat, value] = primaryStats[i]
-        canvas.drawText("#FFFFFF",`${stat}: ${value}`, hudDims.x + 10, hudDims.y + 24 + i*14, {align: 'left', style: '12px'})
+        canvas.drawText("#FFFFFF",`${stat}: ${value + (game.player.stats.statDump.primary[stat] || 0)}`, hudDims.x + 10, hudDims.y + 24 + i*14, {align: 'left', style: '12px'})
     }
 
     // Secondary Stats Section
@@ -174,13 +175,24 @@ const renderRightSideHUD = (canvas, game) => {
         canvas.drawText("#FFFFFF",`${stat}: ${value()}`, hudDims.x + 140, hudDims.y + 24 + i*14, {align: 'left', style: '12px'})
     }
 
-    // Damage Types Section
-    canvas.drawText("#FFFFFF",`Damage Types`, hudDims.x + 10, hudDims.y + 130, {align: 'left', style: '12px'})
-    const damages = Object.entries(game.player.stats.damages || {})
-    for (let i = 0; i < damages.length; i += 1) {
-        const [stat, value] = damages[i]
+    // Melee Damage Types Section
+    canvas.drawText("#FFFFFF",`Melee Damage`, hudDims.x + 10, hudDims.y + 130, {align: 'left', style: '12px'})
+    const meleeDamages = Object.entries(getDamages(game, 'melee'))
+    for (let i = 0; i < meleeDamages.length; i += 1) {
+        const [stat, value] = meleeDamages[i]
         if (value > 0) {
             canvas.drawText("#FFFFFF",`${stat}: ${value}`, hudDims.x + 10, hudDims.y + 144 + i*14, {align: 'left', style: '12px'})
+        }
+    }
+
+    const offsetDamage = meleeDamages.length*14 + 20
+    // Range Damage Types Section
+    canvas.drawText("#FFFFFF",`Range Damage`, hudDims.x + 10, hudDims.y + 130 + offsetDamage, {align: 'left', style: '12px'})
+    const rangeDamages =  Object.entries(getDamages(game, 'rangeShoot'))
+    for (let i = 0; i < rangeDamages.length; i += 1) {
+        const [stat, value] = rangeDamages[i]
+        if (value > 0) {
+            canvas.drawText("#FFFFFF",`${stat}: ${value}`, hudDims.x + 10, hudDims.y + 130 + offsetDamage + 14 + i*14, {align: 'left', style: '12px'})
         }
     }
     
@@ -219,7 +231,7 @@ const renderRightSideHUD = (canvas, game) => {
 export const renderOverlay = (game, mousePos) => {
     game.canvas.clearOverlay()
     if (game.heldItem !== null) {
-        game.canvas.drawOverlayTile(game.heldItem.item.tile, ...mousePos)
+        game.canvas.drawOverlayTile(game.heldItem.tile, ...mousePos)
         return
     }
 

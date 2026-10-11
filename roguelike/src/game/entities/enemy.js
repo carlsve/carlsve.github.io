@@ -2,7 +2,7 @@ import { add2d, clamp2d, eq2d, hypot2d, sub2d } from '../../utils/vec2d.js'
 import { hasLOS } from '../algorithms/hasLOS.js'
 import { nextPosTowardGoal } from '../algorithms/nextPosTowardsGoal.js'
 import { melee } from './combat.js'
-import { damageTypes } from './damageTypes.js'
+import { damageTypes } from './damage.js'
 import { initSkills, initStats } from './stats.js'
 
 export const getEnemy = (game, startPos) => {

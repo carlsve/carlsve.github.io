@@ -4,6 +4,7 @@ import { effects } from '../effects.js'
 import { CONSUMABLE, SELECTABLE } from '../items.js'
 import { melee, rangeShoot, rangeThrow } from './combat.js'
 import { initSkills, initStats } from './stats.js'
+import { getDamages } from './damage.js'
 
 export const getPlayer = (game, startPos) => {
     const stats = initStats()
@@ -35,14 +36,19 @@ export const getPlayer = (game, startPos) => {
         console.log("player attacked enemy")
         enemy.alert()
         if (type === 'melee') {
+            player.stats.currentDamages = getDamages(game, 'melee')
             melee(game.rng, player, enemy)
         } else {
             if (player.selectedSlot !== null) {
                 const item = player.selectedSlot
                 if (item.type === 'throwable') {
+                    player.stats.currentDamages = getDamages(game, 'rangeThrow')
                     rangeThrow(game.rng, player, enemy)
                 } else if (item.type === 'shootable' && game.gear.crossbow !== null) {
+                    player.stats.currentDamages = getDamages(game, 'rangeShoot')
                     rangeShoot(game.rng, player, enemy)
+                } else {
+                    return false
                 }
             }
         }
@@ -50,6 +56,8 @@ export const getPlayer = (game, startPos) => {
         if (enemy.stats.currentLife <= 0) {
             player.getXP(50)
         }
+
+        return true
     }
 
     player.perform = ({ action, ...payload }) => {
@@ -79,8 +87,7 @@ export const getPlayer = (game, startPos) => {
                 }
                 for (const enemy of game.enemies) {
                     if (eq2d(payload.pos, enemy.pos)) {
-                        attack(enemy, 'range')
-                        return true
+                        return attack(enemy, 'range')
                     }
                 }
                 return false
