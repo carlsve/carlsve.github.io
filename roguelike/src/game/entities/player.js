@@ -1,7 +1,7 @@
 import { add2d, clamp2d, eq2d } from '../../utils/vec2d.js'
 import { hasLOS } from '../algorithms/hasLOS.js'
 import { effects } from '../effects.js'
-import { CONSUMABLE, SELECTABLE } from '../items.js'
+import { canConsume, canSelect, getItemData } from '../items.js'
 import { melee, rangeShoot, rangeThrow } from './combat.js'
 import { initSkills, initStats } from './stats.js'
 import { getDamages } from './damage.js'
@@ -34,25 +34,26 @@ export const getPlayer = (game, startPos) => {
 
     const attack = (enemy, type) => {
         console.log("player attacked enemy")
-        enemy.alert()
         if (type === 'melee') {
             player.stats.currentDamages = getDamages(game, 'melee')
             melee(game.rng, player, enemy)
         } else {
             if (player.selectedSlot !== null) {
                 const item = player.selectedSlot
-                if (item.type === 'throwable') {
+                if (getItemData(item).type === 'throwable') {
                     player.stats.currentDamages = getDamages(game, 'rangeThrow')
                     rangeThrow(game.rng, player, enemy)
-                } else if (item.type === 'shootable' && game.gear.crossbow !== null) {
+                } else if (getItemData(item).type === 'shootable' && game.gear.crossbow !== null) {
                     player.stats.currentDamages = getDamages(game, 'rangeShoot')
                     rangeShoot(game.rng, player, enemy)
                 } else {
                     return false
                 }
+            } else {
+                return false
             }
         }
-
+        enemy.alert()
         if (enemy.stats.currentLife <= 0) {
             player.getXP(50)
         }
@@ -95,7 +96,7 @@ export const getPlayer = (game, startPos) => {
             case 'consume': {
                 const item = game.inventory[payload.inventoryIndex]
                 game.inventory[payload.inventoryIndex] = null
-                effects[item.effect](game)
+                effects[getItemData(item).effect](game)
                 return true
             }
             case 'useItemInventory':
@@ -103,11 +104,11 @@ export const getPlayer = (game, startPos) => {
                 const from = action === 'useItemInventory' ? 'inventory' : 'itemQuickBar'
                 const item = game[from][payload.index]
                 if (item !== null) {
-                    if (CONSUMABLE.includes(item.type)) {
+                    if (canConsume(item)) {
                         game[from][payload.index] = null
-                        effects[item.effect](game)
+                        effects[getItemData(item).effect](game)
                         return true
-                    } else if (SELECTABLE.includes(item.type)) {
+                    } else if (canSelect(item)) {
                         game.player.selectedSlot = item
                         return false
                     }

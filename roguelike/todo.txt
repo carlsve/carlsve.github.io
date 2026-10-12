@@ -4,7 +4,6 @@ Definitives:
     - damage calculations for thrown!!!
 - item rework
     - stackable items (only usable items should be stackable)
-    - possible rework, so items are not recreated every function call?
 - integrate stats more
     - sneakiness
 - magic (extremely simple)

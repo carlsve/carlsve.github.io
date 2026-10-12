@@ -1,3 +1,5 @@
+import { getItemData } from "../items.js"
+
 export const damageTypes = {
     crushing: 'crushing', 
     slashing: 'slashing', 
@@ -26,7 +28,7 @@ export const getDamages = (game, type) => {
     const damages = {}
 
     const addDamages = (item) => {
-        for (const [damageType, value] of Object.entries(item.stats.damages)) {
+        for (const [damageType, value] of Object.entries(getItemData(item).stats.damages || {})) {
             damages[damageType] = (damages[damageType] || 0) + value
         }
     }
@@ -35,14 +37,14 @@ export const getDamages = (game, type) => {
         if (item === null) {
             continue
         }
-        if (item.type === 'weapon' || item.type === 'shield') {
+        if (getItemData(item).type === 'weapon' || getItemData(item).type === 'shield') {
             if (type === 'melee') {
                 addDamages(item)
             }
             continue
         }
 
-        if (item.type === 'crossbow') {
+        if (getItemData(item).type === 'crossbow') {
             if (type === 'rangeShoot') {
                 addDamages(item)
             }

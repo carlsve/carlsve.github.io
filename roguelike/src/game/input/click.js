@@ -1,6 +1,6 @@
 import { canPlace, firstEmpty, kinds, peek } from '../inventory.js'
-import { firstGearSlot, SLOTS_FOR_TYPE } from '../gear.js'
-import { canUse } from '../items.js'
+import { firstEmptyGearSlot, SLOTS_FOR_TYPE } from '../gear.js'
+import { canUse, getItemData } from '../items.js'
 import { sub2d, eq2d, apply2d, add2d } from '../../utils/vec2d.js'
 
 export const resolveClick = (game, { target, button, shift }) => {
@@ -34,12 +34,12 @@ export const resolveClick = (game, { target, button, shift }) => {
                     if (canUse(item)) {
                         return { command: { action: 'useItemInventory', index: index }}
                     } else {
-                        const possibleSlots = SLOTS_FOR_TYPE[item.type] || []
+                        const possibleSlots = SLOTS_FOR_TYPE[getItemData(item).type] || []
                         // Can only swap slots that are not multi (rings, weapons)
                         if (possibleSlots.length === 1) {
                             return { command: { action: 'moveItem', from: kinds.INVENTORY(index), to: kinds.GEAR(possibleSlots[0]) } }
                         } else if (possibleSlots.length > 1) {
-                            const slot = firstGearSlot(game, item)
+                            const slot = firstEmptyGearSlot(game, item)
                             if (slot !== null) {
                                 return { command: { action: 'moveItem', from: kinds.INVENTORY(index), to: kinds.GEAR(slot) } }
                             }
@@ -75,7 +75,7 @@ export const resolveClick = (game, { target, button, shift }) => {
                 } else {
                     if (eq2d(worldPos, game.player.pos)) {
                         const itemQuickBarIndex = firstEmpty(game, 'itemQuickBar')
-                        if (itemQuickBarIndex !== -1) {
+                        if (canPlace(game, kinds.ITEM_QUICK_BAR(itemQuickBarIndex), peek(game, kinds.HELD)) && itemQuickBarIndex !== -1) {
                             return { command: { action: 'moveItem', from: kinds.HELD, to: kinds.ITEM_QUICK_BAR(itemQuickBarIndex) } }
                         }
                         const inventoryIndex = firstEmpty(game, 'inventory')

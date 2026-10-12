@@ -2,7 +2,7 @@ import { camera } from "./camera.js"
 import { eq2d, mul2d, sub2d, add2d } from "../utils/vec2d.js"
 import { isPointInRect } from "../utils/rectangle.js"
 import { getDamages } from "./entities/damage.js"
-
+import { getItemData } from "./items.js"
 const dungeonTileOfIndex = ["floor", "wall", "stairs"]
 
 export const render = (game) => {
@@ -27,7 +27,7 @@ export const render = (game) => {
 
     for (const item of game.items) {
         if (game.visible.some((pos => eq2d(pos, item.pos)))) {
-            canvas.drawTile(item.tile, ...mul2d(canvas.ts, sub2d(item.pos, [viewPort.x, viewPort.y])))
+            canvas.drawTile(getItemData(item).tile, ...mul2d(canvas.ts, sub2d(item.pos, [viewPort.x, viewPort.y])))
         }
     }
 
@@ -115,7 +115,7 @@ const renderBottomHUD = (canvas, game) => {
     for (let y = 0; y < itemQuickBarDims.rows; y += 1) {
         for (let x = 0; x < itemQuickBarDims.cols; x += 1) {
             if (game.itemQuickBar[y * itemQuickBarDims.cols + x]) {
-                canvas.drawTile(game.itemQuickBar[y * itemQuickBarDims.cols + x].tile, itemQuickBarDims.x + x*canvas.ts, itemQuickBarDims.y + y*canvas.ts)
+                canvas.drawTile(getItemData(game.itemQuickBar[y * itemQuickBarDims.cols + x]).tile, itemQuickBarDims.x + x*canvas.ts, itemQuickBarDims.y + y*canvas.ts)
             } else {
                 canvas.drawTile('emptySlot', itemQuickBarDims.x + x*canvas.ts, itemQuickBarDims.y + y*canvas.ts)
             }
@@ -123,7 +123,7 @@ const renderBottomHUD = (canvas, game) => {
     }
 
     // Selected Slot
-    canvas.drawTile(game.player.selectedSlot !== null ? game.player.selectedSlot.tile : 'emptySlot', canvas.selectedSlot.x, canvas.selectedSlot.y)
+    canvas.drawTile(game.player.selectedSlot !== null ? getItemData(game.player.selectedSlot).tile : 'emptySlot', canvas.selectedSlot.x, canvas.selectedSlot.y)
 
     // HP Bar
     const hpBarDims = { x: hudDims.x + 10, y: hudDims.y + 70, w: 100, h: 20 }
@@ -212,7 +212,7 @@ const renderRightSideHUD = (canvas, game) => {
     for (let y = 0; y < inventoryDims.rows; y += 1) {
         for (let x = 0; x < inventoryDims.cols; x += 1) {
             if (game.inventory[y * inventoryDims.cols + x]) {
-                canvas.drawTile(game.inventory[y * 10 + x].tile, inventoryDims.x + x*canvas.ts, inventoryDims.y + y*canvas.ts)
+                canvas.drawTile(getItemData(game.inventory[y * 10 + x]).tile, inventoryDims.x + x*canvas.ts, inventoryDims.y + y*canvas.ts)
             } else {
                 canvas.drawTile('emptySlot', inventoryDims.x + x*canvas.ts, inventoryDims.y + y*canvas.ts)
             }
@@ -224,14 +224,14 @@ const renderRightSideHUD = (canvas, game) => {
     canvas.ctx.fillStyle = '#444444'
     canvas.ctx.fillRect(gearDims.x, gearDims.y, gearDims.w, gearDims.h)
     for (const [gearType, gearPos] of Object.entries(canvas.gearSlots)) {
-        canvas.drawTile((game.gear[gearType] && game.gear[gearType].tile) || 'emptySlot', ...gearPos)
+        canvas.drawTile((game.gear[gearType] && getItemData(game.gear[gearType]).tile) || 'emptySlot', ...gearPos)
     }
 }
 
 export const renderOverlay = (game, mousePos) => {
     game.canvas.clearOverlay()
     if (game.heldItem !== null) {
-        game.canvas.drawOverlayTile(game.heldItem.tile, ...mousePos)
+        game.canvas.drawOverlayTile(getItemData(game.heldItem).tile, ...mousePos)
         return
     }
 

@@ -21,7 +21,7 @@ location:
 
 import { eq2d } from "../utils/vec2d.js"
 import { equip, SLOTS_FOR_TYPE, unequip } from "./gear.js"
-import { USABLE } from "./items.js"
+import { canUse, getItemData } from "./items.js"
 
 export const kinds = {
     INVENTORY: (index) => ({ kind: 'inventory', index }),
@@ -136,8 +136,9 @@ export const put = (game, location, item) => {
             return displaced
         }
         case 'held': {
+            const displaced = game.heldItem
             game.heldItem = item
-            return null
+            return displaced
         }
         case 'ground': {
             item.pos = location.pos
@@ -184,13 +185,13 @@ export const moveItem = (game, from, to) => {
 export const canPlace = (game, to, item) => {
     switch (to.kind) {
         case 'gear': {
-            return SLOTS_FOR_TYPE[item.type].includes(to.slot)
+            return (SLOTS_FOR_TYPE[getItemData(item).type] || []).includes(to.slot)
         }
         case 'inventory': {
             return true
         }
         case 'itemQuickBar': {
-            return USABLE.includes(item.type)
+            return canUse(item)
         }
         case 'held': {
             return true
