@@ -1,5 +1,5 @@
 import { sub2d, apply2d } from "../../utils/vec2d.js"
-import { damageTypes, MUNDANE, EXOTIC } from "./damageTypes.js"
+import { damageTypes, MUNDANE, EXOTIC } from "./damage.js"
 
 const MAX_DEPTH = 100
 
@@ -9,15 +9,15 @@ function resolveMeleeDamage(attacker, defender, modifiers = {}) {
     const exotic = {}
     const logs = []
     logs.push({modifiers: modifiers})
-    logs.push({initialAttackerDamages: {...attacker.stats.damages}})
+    logs.push({initialAttackerDamages: {...attacker.stats.currentDamages}})
     logs.push({initialDefenderResistances: {...defender.stats.resistances}})
     // calculate attackers damage
     for (const damageType of Object.keys(damageTypes)) {
-        if (attacker.stats.damages[damageType] > 0) {
+        if (attacker.stats.currentDamages[damageType] > 0) {
             if (MUNDANE.includes(damageType)) {
-                mundane[damageType] = attacker.stats.damages[damageType]
+                mundane[damageType] = attacker.stats.currentDamages[damageType]
             } else if (EXOTIC.includes(damageType)) {
-                exotic[damageType] = attacker.stats.damages[damageType]
+                exotic[damageType] = attacker.stats.currentDamages[damageType]
             } else {
                 throw new Error(`Damage type: ${damageType} not supported!`)
             }

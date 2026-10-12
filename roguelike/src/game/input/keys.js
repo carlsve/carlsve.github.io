@@ -1,3 +1,6 @@
+import { pTimeout } from '../../utils/timers.js'
+
+let downTimer = false
 export const downInput = {
     shift: false,
     left: false,
@@ -91,12 +94,28 @@ const keysToInput = (e) => {
 
 export const keyDownHandler = (turn, game) => (e) => {
     const input = keysToInput(e)
-    if (input !== null && !downInput[input]) {
-        downInput[input] = true
-        const action = inputToAction(input)
-        if (action) {
-            game.walkId += 1
-            turn(action)
+    if (input !== null) {
+        if(!downInput[input]) {
+            downInput[input] = true
+            const action = inputToAction(input)
+            if (action) {
+                game.walkId += 1
+                turn(action)
+            }
+            downTimer = true
+            if (['up', 'down', 'left', 'right'].includes(input)) {
+                pTimeout(100).then(() => { downTimer = false })
+            }
+        } else if (!downTimer) {
+            const action = inputToAction(input)
+            if (action) {
+                game.walkId += 1
+                turn(action)
+            }
+            downTimer = true
+            if (['up', 'down', 'left', 'right'].includes(input)) {
+                pTimeout(100).then(() => { downTimer = false })
+            }
         }
     }
 }

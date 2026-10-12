@@ -4,7 +4,7 @@ import { keyDownHandler, keyUpHandler, downInput } from './input/keys.js'
 import { mouseHandler, mouseMoveHandler, rightClickHandler } from './input/mouse.js'
 import { getEnemy } from './entities/enemy.js'
 import { initTurn } from './turn.js'
-import { makeItem } from './items.js'
+import { createItem } from './items.js'
 import { randomPointInRect } from '../utils/rectangle.js'
 import { eq2d } from '../utils/vec2d.js'
 
@@ -42,19 +42,17 @@ export const initGame = (canvas, rng, onDeath) => {
         items: [],
         mousePos: [0,0],
     }
-    game.findEmptyInventoryIndex = () => game.inventory.findIndex(item => item === null)
-    game.findEmptyItemQuickBarIndex = () => game.itemQuickBar.findIndex(item => item === null)
 
-    game.inventory[0] = makeItem('sword')
-    game.inventory[1] = makeItem('healthPotion')
-    game.inventory[2] = makeItem('crossbow')
-    game.inventory[3] = makeItem('arrows')
-    game.inventory[4] = makeItem('throwingStar')
-    game.inventory[5] = makeItem('healthPotion')
-    game.inventory[6] = makeItem('healthPotion')
-    game.inventory[7] = makeItem('healthPotion')
-    game.inventory[8] = makeItem('healthPotion')
-    game.inventory[9] = makeItem('healthPotion')
+    game.inventory[0] = createItem('sword')
+    game.inventory[1] = createItem('healthPotion')
+    game.inventory[2] = createItem('crossbow')
+    game.inventory[3] = createItem('arrows')
+    game.inventory[4] = createItem('throwingStar')
+    game.inventory[5] = createItem('sword2')
+    game.inventory[6] = createItem('helmet')
+    game.inventory[7] = createItem('healthPotion')
+    game.inventory[8] = createItem('healthPotion')
+    game.inventory[9] = createItem('healthPotion')
 
     const playerStartPos = randomPointInRect(rng, world.getRandomRoom(rng))
     game.player = getPlayer(game, playerStartPos)
@@ -67,12 +65,12 @@ export const initGame = (canvas, rng, onDeath) => {
     })
 
     game.items = [
-        makeItem('sword'),
-        makeItem('helmet'),
-        makeItem('healthPotion'),
-        makeItem('healthPotion'),
-        makeItem('healthPotion'),
-        makeItem('healthPotion'),
+        createItem('sword'),
+        createItem('helmet'),
+        createItem('healthPotion'),
+        createItem('healthPotion'),
+        createItem('healthPotion'),
+        createItem('healthPotion'),
     ].map(item => {
         item.pos = randomPointInRect(rng, world.getRandomRoom(rng))
         return item

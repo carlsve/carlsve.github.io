@@ -1,22 +1,15 @@
 Definitives:
 - ranged
-    - stat change
-        - list of modifiers
-        - armour/jewellry applies to all
-        - crossbow only applies to range, 
-        - weapon1,2 only applies to melee,
-        - thrown takes meleePower (same calculation as in melee)
-    - damage types split (melee, gear)
-    - thrown can be thrown, use melee mundane damage (? check)
-    - arrows require crossbow, use ranged damage (? check)
     - damage calculations for ranged!!!
+    - damage calculations for thrown!!!
+- item rework
+    - stackable items (only usable items should be stackable)
+- integrate stats more
+    - sneakiness
 - magic (extremely simple)
     - spell in quickbar
     - consumes mana
     - sprite for a spell
-- item rework
-    - stackable items (only usable items should be stackable)
-    - possible rework, so items are not recreated every function call?
 - art assets
     - rudimentary player with transparency blocks
     - three different maces
@@ -74,8 +67,6 @@ Definitives:
     - shops
     - lots of chests
     - lockpicks
-- integrate stats more
-    - sneakiness
 - UI upgrade (huge feature)
     - osrs like
         - tabs on right hud
